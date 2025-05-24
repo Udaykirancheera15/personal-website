@@ -1,0 +1,116 @@
+@use 'variables';
+@use 'animations';
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--dark-color);
+  color: var(--light-color);
+  opacity: 0;
+  animation: fadeBody 1s ease-out forwards;
+
+  &.light-theme {
+    background-color: var(--lighter-color);
+    color: var(--dark-color);
+  }
+}
+
+// Scrollbar styling
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 10px;
+}
+
+// Section styling — DO NOT add max-width/margin/padding here!
+section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 6rem 5% 4rem;
+
+  &.hero {
+    padding: 0;
+  }
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.section-title {
+  font-family: var(--font-secondary);
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+  color: var(--primary-color);
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 4px;
+    background: var(--gradient-secondary);
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+  }
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 700px;
+  margin: 2rem auto 0;
+}
+
+.section-loader {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--dark-color);
+}
+
+body.light-theme {
+  .section-subtitle {
+    color: rgba(0, 0, 0, 0.7);
+  }
+  .section-loader {
+    background-color: var(--lighter-color);
+  }
+}
+
+@media (max-width: 768px) {
+  .section-title { font-size: 2.5rem; }
+  .section-subtitle { font-size: 1.1rem; }
+}
+@media (max-width: 576px) {
+  .section-title { font-size: 2.2rem; }
+  .section-subtitle { font-size: 1rem; }
+}

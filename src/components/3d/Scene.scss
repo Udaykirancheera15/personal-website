@@ -1,0 +1,14 @@
+.canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+// Enable pointer events for interactive scenes
+.interactive .canvas-container {
+  pointer-events: auto;
+}

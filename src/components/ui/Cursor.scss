@@ -1,0 +1,37 @@
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent-color);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s;
+}
+
+.cursor-outline {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(21, 152, 149, 0.5);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.2s, width 0.3s, height 0.3s, border-color 0.3s;
+  
+  &.hover {
+    width: 60px;
+    height: 60px;
+    border-color: var(--primary-color);
+  }
+}
+
+// Hide on mobile devices
+@media (max-width: 768px) {
+  .cursor-dot,
+  .cursor-outline {
+    display: none;
+  }
+}

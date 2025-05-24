@@ -1,0 +1,58 @@
+.chat-preloader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .robot-face {
+      position: relative;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      
+      .eye {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        top: 6px;
+        
+        &.left {
+          left: 4px;
+        }
+        
+        &.right {
+          right: 4px;
+        }
+      }
+    }
+  }
+  
+  .typing-indicator {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-secondary);
+    padding: 0.75rem 1rem;
+    border-radius: 18px;
+    gap: 6px;
+    border: 1px solid var(--border-color);
+    
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+    }
+  }
+}
