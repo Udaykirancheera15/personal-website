@@ -2,15 +2,15 @@
   "name": "portfolio",
   "private": true,
   "version": "1.0.0",
-  "homepage": "https://udaykirancheera15.github.io/Portfolio", // ← Add this
+  "homepage": "https://udaykirancheera15.github.io/Portfolio",
   "scripts": {
     "dev": "concurrently \"vite\" \"PORT=3000 node server/index.cjs\"",
     "build": "vite build",
     "server": "PORT=3000 node server/index.cjs",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "predeploy": "npm run build",             // ← Add this
-    "deploy": "gh-pages -d dist"              // ← And this
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
