@@ -8,10 +8,8 @@ import './Skills.scss';
 // Define categories with icons
 const categories = [
   { id: 'all', label: 'All Skills' },
-  { id: 'frontend', label: 'Frontend', icon: <FaDesktop /> },
   { id: 'backend', label: 'Backend', icon: <FaServer /> },
   { id: 'database', label: 'Database', icon: <FaDatabase /> },
-  { id: 'mobile', label: 'Mobile', icon: <FaMobileAlt /> },
   { id: 'devops', label: 'DevOps', icon: <FaTools /> },
   { id: 'cloud', label: 'Cloud', icon: <FaCloud /> },
   { id: 'security', label: 'Security', icon: <FaShieldAlt /> },
@@ -106,9 +104,10 @@ const Skills = () => {
           >
             <h3>Technical Proficiency</h3>
             <p>
-              With a strong foundation in multiple technologies and programming languages,
-              I bring a versatile skill set to every project. My expertise spans frontend
-              and backend development, database design, cloud services, and more.
+              From quantum-enhanced machine learning models to cybersecurity protocols,
+              my skill set encompasses cutting-edge technologies across multiple domains. With hands-on 
+              research experience and industry internships, I bring both theoretical knowledge and 
+              practical expertise to complex technological challenges.
             </p>
           </motion.div>
           

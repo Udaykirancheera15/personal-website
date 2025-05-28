@@ -1,4 +1,3 @@
-// App.jsx
 import React, { useEffect, useRef, useState } from 'react';
 import { AiAssistantProvider } from './context/AiAssistantContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -23,11 +22,27 @@ import fullpage from 'fullpage.js';
 function App() {
   const [loading, setLoading] = useState(true);
   const fullpageRef = useRef(null);
+  const [preloaderDone, setPreloaderDone] = useState(false);
 
+  // Minimum display time for preloader (4 seconds)
   useEffect(() => {
-    const timer = setTimeout(() => { setLoading(false); }, 2000);
+    const timer = setTimeout(() => {
+      setPreloaderDone(true);
+    }, 7000);
+
     return () => clearTimeout(timer);
   }, []);
+
+  // Only hide loading when both preloader is done AND content is ready
+  useEffect(() => {
+    if (preloaderDone) {
+      // Additional small delay for smooth transition
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [preloaderDone]);
 
   useEffect(() => {
     let fpApi;
@@ -49,7 +64,7 @@ function App() {
         verticalCentered: true,
         fitToSection: true,
       });
-      // Cleanup on unmount:
+      
       return () => {
         if (fpApi && typeof fpApi.destroy === 'function') fpApi.destroy('all');
       };
@@ -61,7 +76,7 @@ function App() {
       <AiAssistantProvider>
         <div className="app">
           {loading ? (
-            <Preloader />
+            <Preloader onComplete={() => setPreloaderDone(true)} />
           ) : (
             <>
               <Navbar />

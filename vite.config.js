@@ -2,11 +2,9 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react({
-      // This will make React plugin transform all .js files as JSX
       include: "**/*.{jsx,js}",
     }),
   ],
@@ -18,7 +16,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:3000', // Changed from 5000 to 3000
         changeOrigin: true,
         secure: false,
       },

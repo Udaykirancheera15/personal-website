@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
-import { FaLaptopCode, FaMobileAlt, FaServer, FaDatabase } from 'react-icons/fa';
+import { FaRobot, FaShieldAlt, FaCloud, FaCode } from 'react-icons/fa';
 import Button from '../ui/Button';
 import './About.scss';
 
@@ -21,55 +21,53 @@ const About = () => {
         <motion.div className="about-img-container" initial={{ opacity: 0, x: -50 }} animate={isVisible ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.7 }}>
           <img src="/assets/images/profile.jpg" alt="About Uday Kiran" className="about-img" />
           <div className="about-img-overlay"></div>
-          <div className="about-experience">
-            <div className="experience-number">3<span>+</span></div>
-            <div className="experience-text">Years of Experience</div>
-          </div>
+
         </motion.div>
         <motion.div className="about-text" initial={{ opacity: 0, x: 50 }} animate={isVisible ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.7 }}>
           <div className="about-subtitle">Who am I?</div>
-          <h3 className="about-heading">I'm Uday Kiran, a Full Stack Developer</h3>
+          <h3 className="about-heading">I'm Uday Kiran, a Tech Enthusiast & Researcher</h3>
           <p className="about-description">
-            I'm a passionate developer with a strong foundation in both frontend and backend technologies.
-            With over 3 years of experience, I've worked on various projects ranging from web applications
-            to mobile apps and enterprise solutions. I'm dedicated to creating efficient, scalable, and
-            user-friendly applications that solve real-world problems.
+            I'm a recent Graduate in Information Technology from JNTU Vizianagaram with boundless curiosity for 
+            exploring cutting-edge technologies. My expertise spans machine learning, cybersecurity, and DevOps, 
+            backed by extensive research experience and hands-on internships. I'm passionate about tackling 
+            complex challenges in AI applications, network security, and digital forensics while continuously 
+            pushing technological boundaries.
           </p>
           <div className="about-features">
             <motion.div className="feature-item" initial={{ opacity: 0, y: 20 }} animate={isVisible ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2, duration: 0.5 }}>
               <div className="feature-icon">
-                <FaLaptopCode />
+                <FaRobot />
               </div>
               <div className="feature-text">
-                <h4>Web Development</h4>
-                <p>Creating responsive and interactive web applications using modern frameworks and libraries.</p>
+                <h4>AI & Machine Learning</h4>
+                <p>Developing advanced ML models, quantum-enhanced vision transformers, and graph neural networks for real-world applications.</p>
               </div>
             </motion.div>
             <motion.div className="feature-item" initial={{ opacity: 0, y: 20 }} animate={isVisible ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3, duration: 0.5 }}>
               <div className="feature-icon">
-                <FaMobileAlt />
+                <FaShieldAlt />
               </div>
               <div className="feature-text">
-                <h4>Mobile Apps</h4>
-                <p>Developing cross-platform mobile applications with React Native and other technologies.</p>
+                <h4>Cybersecurity</h4>
+                <p>Specializing in digital forensics, penetration testing, threat analysis, and security protocols for critical infrastructure.</p>
               </div>
             </motion.div>
             <motion.div className="feature-item" initial={{ opacity: 0, y: 20 }} animate={isVisible ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4, duration: 0.5 }}>
               <div className="feature-icon">
-                <FaServer />
+                <FaCloud />
               </div>
               <div className="feature-text">
-                <h4>Backend Services</h4>
-                <p>Building robust and scalable backend services with Node.js, Express, and Python.</p>
+                <h4>Cloud & DevOps</h4>
+                <p>Building scalable solutions with AWS, Docker, Kubernetes, and implementing CI/CD pipelines for efficient deployment.</p>
               </div>
             </motion.div>
             <motion.div className="feature-item" initial={{ opacity: 0, y: 20 }} animate={isVisible ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5, duration: 0.5 }}>
               <div className="feature-icon">
-                <FaDatabase />
+                <FaCode />
               </div>
               <div className="feature-text">
-                <h4>Database Design</h4>
-                <p>Designing and implementing efficient database structures with MongoDB, PostgreSQL, and more.</p>
+                <h4>Research & Development</h4>
+                <p>Contributing to academic research in software engineering, publishing findings, and developing innovative solutions.</p>
               </div>
             </motion.div>
           </div>

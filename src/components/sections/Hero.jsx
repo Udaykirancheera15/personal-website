@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaArrowRight, FaDownload } from 'react-icons/fa';
+import { FaArrowRight, FaDownload, FaPython, FaDocker, FaAws, FaLinux, FaDatabase } from 'react-icons/fa';
+import { SiPytorch } from 'react-icons/si';
 import Button from '../ui/Button';
 import Scene from '../3d/Scene';
 import './Hero.scss';
@@ -28,6 +29,15 @@ const Hero = () => {
       });
     }
   }, []);
+
+  const techStack = [
+    { name: 'Python', icon: <FaPython /> },
+    { name: 'PyTorch', icon: <SiPytorch /> },
+    { name: 'Docker', icon: <FaDocker /> },
+    { name: 'AWS', icon: <FaAws /> },
+    { name: 'PostgreSQL', icon: <FaDatabase /> },
+    { name: 'Linux', icon: <FaLinux /> }
+  ];
 
   return (
     <section className="hero">
@@ -83,7 +93,7 @@ const Hero = () => {
             <span className="hero-position">Software Engineer / AI Researcher</span>
           </motion.h1>
           <motion.p className="hero-description" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.5 }}>
-		I specialize in Machine Learning, Software Development, and DevOps with a focus on security and optimization. From AI research and GNN applications to cybersecurity and cloud infrastructure, I develop robust solutions for complex challenges.
+		Driven by boundless curiosity for cutting-edge technologies in machine learning, cybersecurity, and DevOps. I have developed quantum-enhanced AI models, graph neural networks for threat detection. From medical AI applications to network security solutions, I tackle complex challenges with innovative approaches.
           </motion.p>
           <motion.div className="hero-buttons" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.5 }}>
             <Button 
@@ -127,32 +137,18 @@ const Hero = () => {
               <img src="/assets/images/profile.jpg" alt="Uday Kiran" className="profile-image" />
             </div>
             <div className="image-frame"></div>
-            <div className="floating-badge">
-              <div className="badge-icon">
-                <FaDownload />
-              </div>
-              <div className="badge-text">Resume Available</div>
-            </div>
-            <div className="floating-code">
-              <code>
-                const developer = {'{'}
-                name: "Uday",
-                skills: ["React", "Node", "Three.js"]
-                {'}'}
-              </code>
-            </div>
           </div>
         </motion.div>
       </div>
       <motion.div className="tech-stack" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.3, duration: 0.5 }}>
         <div className="tech-stack-title">Tech Stack |</div>
         <div className="tech-icons">
-          {['React', 'Node.js', 'Python', 'Three.js', 'MongoDB'].map((tech, i) => (
+          {techStack.map((tech, i) => (
             <div key={i} className="tech-icon">
               <div className="tech-icon-inner">
-                <i className={`devicon-${tech.toLowerCase().replace('.js', 'js')}-plain`}></i>
+                {tech.icon}
               </div>
-              <div className="tech-icon-name">{tech}</div>
+              <div className="tech-icon-name">{tech.name}</div>
             </div>
           ))}
         </div>

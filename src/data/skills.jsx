@@ -1,119 +1,152 @@
 import { 
-  FaReact, FaNodeJs, FaDatabase, FaServer, 
-  FaMobileAlt, FaDocker, FaAws, FaShieldAlt 
+  FaCode, 
+  FaRobot, 
+  FaShieldAlt, 
+  FaCloud, 
+  FaDatabase, 
+  FaDesktop, 
+  FaServer, 
+  FaTools 
 } from 'react-icons/fa';
 
 export const skillsData = [
   {
     id: 1,
-    title: 'Frontend Development',
-    category: 'frontend',
-    icon: <FaReact />,
+    category: 'ml',
+    title: 'Machine Learning & AI',
+    icon: <FaRobot />,
     skills: [
-      'React.js & Next.js',
-      'Three.js & WebGL',
-      'HTML5, CSS3, SCSS',
-      'JavaScript (ES6+)',
-      'TypeScript',
-      'Redux & Context API'
+      'PyTorch & TensorFlow',
+      'Vision Transformers',
+      'Graph Neural Networks',
+      'Quantum ML (Qiskit)',
+      'OpenCV & Computer Vision',
+      'NLTK & NLP',
+      'Scikit-learn',
+      'Deep Learning (CNNs, RNNs)',
+      'BERT & GPT Models',
+      'Neural Architecture Search'
     ]
   },
   {
     id: 2,
-    title: 'Backend Development',
-    category: 'backend',
-    icon: <FaNodeJs />,
+    category: 'security',
+    title: 'Cybersecurity',
+    icon: <FaShieldAlt />,
     skills: [
-      'Node.js & Express',
-      'Python & FastAPI',
-      'RESTful API Design',
-      'GraphQL',
-      'Authentication & Authorization',
-      'Microservices Architecture'
+      'Digital Forensics',
+      'Penetration Testing',
+      'Network Security',
+      'Metasploit & Nmap',
+      'EnCase & FTK Imager',
+      'Threat Analysis',
+      'Incident Response',
+      'Vulnerability Assessment',
+      'Ethical Hacking'
     ]
   },
   {
     id: 3,
-    title: 'Database Management',
-    category: 'database',
-    icon: <FaDatabase />,
+    category: 'programming',
+    title: 'Programming Languages',
+    icon: <FaCode />,
     skills: [
-      'MongoDB & Mongoose',
-      'PostgreSQL',
-      'MySQL',
-      'Redis',
-      'Database Design & Optimization',
-      'ORM (Sequelize, Prisma)'
+    		'Java',
+      'Python',
+      'C/C++',
+      'JavaScript',
+      'R',
+      'SQL',
+      'Bash Scripting'
     ]
   },
   {
     id: 4,
-    title: 'Server Management',
-    category: 'backend',
-    icon: <FaServer />,
+    category: 'cloud',
+    title: 'Cloud & DevOps',
+    icon: <FaCloud />,
     skills: [
+      'IBM Cloud',
+      'Docker & Containers',
+      'Kubernetes',
+      'CI/CD Pipelines',
       'Linux Administration',
-      'Nginx & Apache',
-      'Server Configuration',
-      'Deployment Strategies',
-      'Performance Optimization',
-      'Monitoring & Logging'
+      'Git & Version Control'
+    ]
+  },
+    {
+    id: 4,
+    category: 'devops',
+    title: 'Cloud & DevOps',
+    icon: <FaCloud />,
+    skills: [
+      'IBM Cloud',
+      'Docker & Containers',
+      'Kubernetes',
+      'CI/CD Pipelines',
+      'Linux Administration',
+      'Git & Version Control'
     ]
   },
   {
     id: 5,
-    title: 'Mobile Development',
-    category: 'mobile',
-    icon: <FaMobileAlt />,
+    category: 'backend',
+    title: 'Backend Development',
+    icon: <FaServer />,
     skills: [
-      'React Native',
-      'iOS & Android Development',
-      'App Store Deployment',
-      'Push Notifications',
-      'Mobile UI/UX',
-      'Offline Capabilities'
+      'Flask & FastAPI',
+      'Node.js',
+      'REST APIs',
+      'Microservices',
+      'API Gateway',
+      'Server Architecture'
     ]
   },
   {
     id: 6,
-    title: 'DevOps',
-    category: 'devops',
-    icon: <FaDocker />,
+    category: 'database',
+    title: 'Databases',
+    icon: <FaDatabase />,
     skills: [
-      'Docker & Kubernetes',
-      'CI/CD Pipelines',
-      'GitHub Actions',
-      'Jenkins',
-      'Infrastructure as Code',
-      'Monitoring & Alerting'
+      'PostgreSQL',
+      'MongoDB',
+      'MySQL',
+      'Elasticsearch',
+      'Database Design',
+      'Query Optimization',
+      'Data Modeling'
     ]
   },
+
   {
     id: 7,
-    title: 'Cloud Services',
-    category: 'cloud',
-    icon: <FaAws />,
+    category: 'tools',
+    title: 'Tools & Platforms',
+    icon: <FaTools />,
     skills: [
-      'AWS (EC2, S3, Lambda)',
-      'Google Cloud Platform',
-      'Microsoft Azure',
-      'Serverless Architecture',
-      'Cloud Deployment',
-      'Cost Optimization'
+      'GNS3 & Wireshark',
+      'ELK Stack',
+      'Postman',
+      'Vim',
+      'Podman',
+      'ALTAIR AI Studio',
+      'Docker Compose',
+      'Monitoring Tools'
     ]
   },
   {
-    id: 8,
-    title: 'Security',
-    category: 'security',
-    icon: <FaShieldAlt />,
+    id: 9,
+    category: 'data',
+    title: 'Data Science',
+    icon: <FaRobot />,
     skills: [
-      'Authentication Systems',
-      'Data Encryption',
-      'Security Best Practices',
-      'OWASP Top 10',
-      'Penetration Testing',
-      'Vulnerability Assessment'
+      'Pandas & NumPy',
+      'Matplotlib & Seaborn',
+      'Statistical Analysis',
+      'Feature Engineering',
+      'Data Visualization',
+      'Jupyter',
+      'Research Methodology'
     ]
   }
 ];

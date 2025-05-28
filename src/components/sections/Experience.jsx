@@ -1,9 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaBriefcase, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { experienceData } from '../../data/experience';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import './Experience.scss';
+
+// Updated experience data based on resume (Professional + Volunteer Experience)
+const experienceData = [
+  {
+    role: "Cybersecurity Intern",
+    company: "Andhra Pradesh Space Application Center (APSAC)",
+    date: "January 2025 – May 2025",
+    type: "Professional",
+    description: "Conducted threat analysis and vulnerability assessments . Developed security protocols and risk assessment frameworks ensuring data integrity and system resilience. Implemented cybersecurity measures.",
+    technologies: ["Cybersecurity", "Threat Analysis", "Vulnerability Assessment", "Risk Management",  "Data Security"]
+  },
+  {
+    role: "Cyber Forensics Intern",
+    company: "Innogeecks Technologies Private Limited",
+    date: "July 2024 – August 2024",
+    type: "Professional",
+    description: "Performed digital forensics investigations using industry-standard tools including EnCase, FTK Imager, and Autopsy for evidence acquisition and malware analysis. Developed automated Python scripts for artifact extraction and forensic report generation, reducing investigation time by 40%. Conducted security assessments using penetration testing tools in controlled environments.",
+    technologies: ["Digital Forensics", "EnCase", "FTK Imager", "Autopsy", "Python", "Metasploit", "Nmap", "Penetration Testing"]
+  },
+  {
+    role: "Research Intern - Software Engineering (ML)",
+    company: "National Institute of Technology, Warangal",
+    date: "May 2024 – July 2024",
+    type: "Professional",
+    description: "Developed hybrid machine learning models for software effort estimation, achieving 28% improvement in prediction accuracy using ensemble techniques combining Linear Regression, ANN, KNN, and SVM. Implemented bio-inspired optimization algorithms (Firefly, Particle Swarm) with Analogy-Based Estimation, resulting in enhanced model adaptability across diverse project contexts.",
+    technologies: ["Machine Learning", "Python", "Linear Regression", "ANN", "KNN", "SVM", "Firefly Algorithm", "Particle Swarm Optimization", "Hyperopt"]
+  },
+  {
+    role: "Technical Event Coordinator",
+    company: "ITYUKTA 2K24, JNTUGV",
+    date: "January 2024 – March 2024",
+    type: "Leadership",
+    description: "Led coordination of  technical event for ITYUKTA 2K24, managing event logistics, participant registration, and technical demonstrations. Organized workshops and competitions, facilitating knowledge sharing among students and promoting technical innovation within the university community.",
+    technologies: ["Event Management", "Leadership", "Project Coordination", "Technical Presentations", "Team Management"]
+  },
+
+  {
+    role: "Community Development Volunteer",
+    company: "Sikshana Foundation",
+    date: "June 2023 - August 2023",
+    type: "Community Service",
+    description: "Taught technology skills to 50+ underprivileged students as part of community development initiatives. Developed and delivered interactive workshops on digital literacy, basic programming, and computer fundamentals, empowering students with essential 21st-century skills for future opportunities.",
+    technologies: ["Digital Literacy", "Workshop Development", "Community Impact", "Student Mentoring"]
+  }
+];
 
 const Experience = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -156,6 +200,9 @@ const Experience = () => {
                     <div>
                       <h3 className="job-title">{activeJob.role}</h3>
                       <h4 className="company-title">{activeJob.company}</h4>
+                      <span className={`experience-type ${activeJob.type.toLowerCase().replace(' ', '-')}`}>
+                        {activeJob.type}
+                      </span>
                     </div>
                   </div>
                   <div className="job-duration">

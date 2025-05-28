@@ -4,6 +4,7 @@ import { FaGithub, FaExternalLinkAlt, FaSearch, FaChevronLeft, FaChevronRight, F
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
 import { projectsData } from '../../data/projects';
 import './Projects.scss';
+import LinkHandler from '../ui/LinkHandler';
 
 const Projects = () => {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -12,14 +13,14 @@ const Projects = () => {
   const [ref, isVisible] = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
 
   // Define categories with icons
-  const categories = [
-    { id: 'all', label: 'All', icon: <FaCode /> },
-    { id: 'web', label: 'Web', icon: <FaCode /> },
-    { id: 'mobile', label: 'Mobile', icon: <FaMobile /> },
-    { id: 'ai', label: 'AI & ML', icon: <FaRobot /> },
-    { id: 'backend', label: 'Backend', icon: <FaServer /> },
-    { id: 'security', label: 'Security', icon: <FaShieldAlt /> }
-  ];
+const categories = [
+  { id: 'all', label: 'All', icon: <FaCode /> },
+  { id: 'ai-ml', label: 'AI & ML', icon: <FaRobot /> },
+  { id: 'cybersecurity', label: 'Cybersecurity', icon: <FaShieldAlt /> },
+  { id: 'devops', label: 'DevOps', icon: <FaServer /> },
+  { id: 'fullstack', label: 'Web', icon: <FaCode /> }
+];
+
 
   // Reduced to 2 projects per page to make cards larger
   const projectsPerPage = 2;
@@ -165,26 +166,44 @@ const Projects = () => {
                       
                       <p className="project-description">{project.description}</p>
                       
-                      <div className="project-links">
-                        {project.github && (
-                          <a href={project.github} target="_blank" rel="noopener noreferrer" className="project-link" aria-label="GitHub Repository">
-                            <FaGithub />
-                            <span>Code</span>
-                          </a>
-                        )}
-                        {project.demo && (
-                          <a href={project.demo} target="_blank" rel="noopener noreferrer" className="project-link" aria-label="Live Demo">
-                            <FaExternalLinkAlt />
-                            <span>Demo</span>
-                          </a>
-                        )}
-                        {project.details && (
-                          <a href={project.details} className="project-link" aria-label="Project Details">
-                            <FaSearch />
-                            <span>Details</span>
-                          </a>
-                        )}
-                      </div>
+
+											<div className="project-links">
+												{project.github ? (
+													<a href={project.github} target="_blank" rel="noopener noreferrer" className="project-link">
+														<FaGithub />
+														<span>Code</span>
+													</a>
+												) : (
+													<LinkHandler url="github.com/unavailable" type="github">
+														<span className="project-link">
+															<FaGithub />
+															<span>Code</span>
+														</span>
+													</LinkHandler>
+												)}
+												{project.demo ? (
+													<a href={project.demo} target="_blank" rel="noopener noreferrer" className="project-link">
+														<FaExternalLinkAlt />
+														<span>Demo</span>
+													</a>
+												) : (
+													<LinkHandler url="https://demo.unavailable" type="demo">
+														<span className="project-link">
+															<FaExternalLinkAlt />
+															<span>Demo</span>
+														</span>
+													</LinkHandler>
+												)}
+
+												{project.details && (
+													<LinkHandler url={project.details} type="details">
+														<span className="project-link">
+															<FaSearch />
+															<span>Details</span>
+														</span>
+													</LinkHandler>
+												)}
+											</div>
                     </div>
                   </div>
                 </motion.div>

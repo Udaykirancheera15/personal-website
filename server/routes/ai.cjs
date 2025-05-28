@@ -4,47 +4,89 @@
  */
 const express = require('express');
 const router = express.Router();
-const { getGeminiResponse, getHuggingFaceResponse } = require('../utils/aiProviders.cjs');
+const { getGeminiResponse } = require('../utils/aiProviders.cjs');
+
+// Middleware to log requests
+router.use((req, res, next) => {
+  console.log(`AI Route: ${req.method} ${req.path} at ${new Date().toISOString()}`);
+  next();
+});
 
 // POST endpoint for chat interactions
 router.post('/chat', async (req, res) => {
   try {
+    console.log('Full headers:', req.headers);
+    console.log('Raw body:', req.body);
+    
     const { message } = req.body;
     
-    if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
+    if (!message || typeof message !== 'string' || message.trim().length === 0) {
+      return res.status(400).json({ 
+        error: 'Valid message is required',
+        received: typeof message 
+      });
     }
 
-    // Use Gemini as the primary AI provider
-    const response = await getGeminiResponse(message);
-    res.json({ reply: response });
+    const trimmedMessage = message.trim();
+    console.log('Processing message:', trimmedMessage);
+
+    // Use Gemini as the AI provider
+    const response = await getGeminiResponse(trimmedMessage);
+    
+    console.log('AI response generated successfully');
+    
+    // Return response in the format your frontend expects
+    res.json({ 
+      response: response,  // Changed from 'reply' to 'response'
+      reply: response,     // Keep both for compatibility
+      timestamp: new Date().toISOString(),
+      provider: 'gemini'
+    });
+    
   } catch (error) {
-    console.error('AI Error:', error);
+    console.error('AI Chat Error:', error);
+    
+    // Return a friendly error message
+    const fallbackMessage = "Hi there! 👋 I'm currently having some technical difficulties. " +
+                           "You can reach Uday directly at cheeraudaykiran@gmail.com. " +
+                           "How can I assist you? 😊";
+    
     res.status(500).json({ 
-      error: 'Failed to get AI response',
-      details: error.message
+      response: fallbackMessage,  // Changed from 'reply' to 'response'
+      reply: fallbackMessage,     // Keep both for compatibility
+      timestamp: new Date().toISOString(),
+      error: error.message
     });
   }
 });
 
-// Fallback route using Hugging Face (for backup)
-router.post('/chat/fallback', async (req, res) => {
-  try {
-    const { message } = req.body;
-    
-    if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
+// Health check endpoint
+router.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    availableEndpoints: ['/chat'],
+    envStatus: {
+      gemini: !!process.env.GEMINI_API_KEY_1 || 
+             !!process.env.GEMINI_API_KEY_2 || 
+             !!process.env.GEMINI_API_KEY_3,
+      keysAvailable: [
+        !!process.env.GEMINI_API_KEY_1,
+        !!process.env.GEMINI_API_KEY_2,
+        !!process.env.GEMINI_API_KEY_3
+      ]
     }
-    
-    const response = await getHuggingFaceResponse(message);
-    res.json({ reply: response });
-  } catch (error) {
-    console.error('Fallback AI Error:', error);
-    res.status(500).json({ 
-      error: 'Failed to get fallback AI response',
-      details: error.message
-    });
-  }
+  });
+});
+
+// Test endpoint for debugging
+router.post('/test', (req, res) => {
+  console.log('Test endpoint called with:', req.body);
+  res.json({ 
+    message: 'Test endpoint working!',
+    received: req.body,
+    timestamp: new Date().toISOString()
+  });
 });
 
 module.exports = router;

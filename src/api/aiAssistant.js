@@ -4,7 +4,8 @@
  */
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// Use VITE_API_URL if set, otherwise default to port 3000 (where your backend runs)
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 /**
  * Sends a message to the AI assistant and gets a response
@@ -13,43 +14,45 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
  */
 export const sendMessage = async (message) => {
   try {
-    // Send request to backend API
-    const response = await axios.post(`${API_URL}/api/ai/chat`, { message });
-
-    // Handle different response formats
-    if (typeof response.data === 'string') {
-      return response.data;
-    } else if (response.data.reply) {
-      return response.data.reply;
-    } else if (response.data.response) {
-      return response.data.response;
-    } else if (response.data.generated_text) {
-      return response.data.generated_text;
+    if (!message || typeof message !== 'string' || message.trim().length === 0) {
+      throw new Error('Message cannot be empty');
     }
 
-    throw new Error('Unexpected response format from server');
-  } catch (error) {
-    console.error('Error sending message to AI:', error);
-
-    // Extract error message from different possible locations
-    const errorMessage = 
-      error.response?.data?.error?.message || 
-      error.response?.data?.error ||
-      error.response?.data?.details ||
-      error.message;
-
-    // Try fallback API if available
-    try {
-      const fallbackResponse = await axios.post(`${API_URL}/api/ai/chat/fallback`, { message });
-      if (fallbackResponse.data.reply) {
-        return fallbackResponse.data.reply;
+    const response = await axios.post(`${API_URL}/api/ai/chat`, 
+      { message: message.trim() },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        timeout: 15000 // 15 second timeout
       }
-    } catch (fallbackError) {
-      // Fallback also failed
-      console.error('Fallback AI also failed:', fallbackError);
+    );
+
+    if (!response.data) {
+      throw new Error('Empty response from server');
     }
 
-    throw new Error(errorMessage || 'Failed to get response from AI assistant');
+    // Handle the Gemini response format
+    if (response.data.error) {
+      throw new Error(response.data.error);
+    }
+
+    return response.data.response || 
+           response.data.text ||
+           "Hi! I'm here to help but my daily limit has been exhausted. Could you please try after some time 😊";
+    
+  } catch (error) {
+    console.error('AI Request Failed:', {
+      config: error.config,
+      response: error.response?.data,
+      message: error.message
+    });
+
+    // Return a friendly error message
+    return "Hi there! 👋 I'm currently having some technical difficulties. " +
+           "You can reach Uday directly at cheeraudaykiran@gmail.com. " +
+           "How can I assist you? 😊";
   }
 };
 
@@ -59,10 +62,37 @@ export const sendMessage = async (message) => {
  */
 export const checkAIServiceStatus = async () => {
   try {
-    await axios.get(`${API_URL}/api/ai/status`);
-    return true;
+    const response = await axios.get(`${API_URL}/api/ai/health`, {
+      timeout: 5000
+    });
+    
+    return response.data?.status === 'ok' || 
+           response.data?.healthy === true || 
+           response.status === 200;
+           
   } catch (error) {
-    console.warn('AI service might be unavailable:', error.message);
+    console.warn('AI service status check failed:', {
+      error: error.response?.data || error.message,
+      endpoint: `${API_URL}/api/ai/health`
+    });
     return false;
   }
+};
+
+/**
+ * Utility function to verify API configuration
+ */
+export const verifyAPIConfig = () => {
+  console.group('API Configuration');
+  console.log('API Base URL:', API_URL);
+  console.log('Environment Variables:', {
+    VITE_API_URL: import.meta.env.VITE_API_URL,
+    NODE_ENV: import.meta.env.MODE
+  });
+  console.groupEnd();
+  
+  return {
+    apiUrl: API_URL,
+    env: import.meta.env.MODE
+  };
 };
