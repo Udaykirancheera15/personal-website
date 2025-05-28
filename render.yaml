@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: portfolio-app
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: node server/index.cjs
+    envVars:
+      - key: NODE_ENV
+        value: production
+
