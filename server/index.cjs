@@ -13,13 +13,20 @@ const app = express();
 const PORT = process.env.PORT || 3000; // Changed to match your AI server
 
 // CORS configuration
+const allowedOrigins = (process.env.CORS_ALLOWED_ORIGIN || 'http://localhost:5173,http://localhost:3000').split(',');
+
 const corsOptions = {
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 };
-
 app.use(cors(corsOptions));
 
 // Middleware
