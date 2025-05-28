@@ -25,7 +25,7 @@ const Contact = () => {
     
     try {
       // Get the API base URL from environment or use default
-      const apiUrl = 'https://portfolio-backend-te2b.onrender.com/contact';
+      const apiUrl = 'https://portfolio-backend-te2b.onrender.com/api/contact';
 
       
       // Send form data to the backend
