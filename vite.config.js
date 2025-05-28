@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
+  base: '/Portfolio/', // ← Add this for GitHub Pages deployment
   plugins: [
     react({
       include: "**/*.{jsx,js}",
@@ -16,7 +17,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000', // Changed from 5000 to 3000
+        target: 'http://localhost:3000',
         changeOrigin: true,
         secure: false,
       },
@@ -37,3 +38,4 @@ export default defineConfig({
     },
   },
 });
+
