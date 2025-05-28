@@ -25,8 +25,8 @@ const Contact = () => {
     
     try {
       // Get the API base URL from environment or use default
-      const baseUrl = import.meta.env.VITE_API_URL || '';
-      const apiUrl = `${baseUrl}/api/contact`;
+      const apiUrl = 'https://portfolio-backend-te2b.onrender.com/contact';
+
       
       // Send form data to the backend
       const response = await axios.post(apiUrl, formData);
