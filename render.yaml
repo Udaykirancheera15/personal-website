@@ -1,7 +1,7 @@
 services:
   # Backend API service
   - type: web
-    name: portfolio-api
+    name: portfolio-backend
     runtime: node
     buildCommand: npm install
     startCommand: node server/index.cjs
@@ -14,7 +14,7 @@ services:
 
   # Frontend static site
   - type: static
-    name: portfolio-frontend
+    name: cheera-udaykiran
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     plan: free
