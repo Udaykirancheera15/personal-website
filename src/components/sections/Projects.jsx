@@ -6,11 +6,30 @@ import { projectsData } from '../../data/projects';
 import './Projects.scss';
 import LinkHandler from '../ui/LinkHandler';
 
+// Mobile detection hook
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  return isMobile;
+};
+
 const Projects = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [expandedCard, setExpandedCard] = useState(null);
   const [ref, isVisible] = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
+  const isMobile = useIsMobile();
 
   // Define categories with icons
 const categories = [
@@ -111,7 +130,7 @@ const categories = [
               key={cat.id}
               className={`filter-btn ${activeFilter === cat.id ? 'active' : ''}`}
               onClick={() => setActiveFilter(cat.id)}
-              whileHover={{ y: -3 }}
+              whileHover={!isMobile ? { y: -3 } : {}}
               whileTap={{ scale: 0.95 }}
             >
               <span className="btn-icon">{cat.icon}</span>
@@ -142,16 +161,17 @@ const categories = [
                   key={project.id}
                   className="project-card"
                   variants={itemVariants}
-                  whileHover={{ 
+                  whileHover={!isMobile ? { 
                     y: -5,
                     boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)"
-                  }}
+                  } : {}}
+                  onClick={() => isMobile && setExpandedCard(expandedCard === project.id ? null : project.id)}
                 >
                   <div className="project-image">
                     <img src={project.image} alt={project.title} />
                   </div>
                   
-                  <div className="project-overlay">
+                  <div className={`project-overlay ${isMobile && expandedCard === project.id ? 'mobile-visible' : ''}`}>
                     <div className="project-content">
                       <h3 className="project-title">{project.title}</h3>
                       
