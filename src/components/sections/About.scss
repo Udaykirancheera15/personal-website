@@ -199,44 +199,138 @@ body.light-theme {
   }
 }
 
-// Responsive adjustments
+// Enhanced responsive adjustments
 @media (max-width: 992px) {
   .about-content {
     grid-template-columns: 1fr;
     gap: 3rem;
+    text-align: center;
   }
   
   .about-text {
     order: 2;
+    max-width: 100%;
   }
   
   .about-img-container {
     order: 1;
-    max-width: 500px;
+    max-width: 400px;
     margin: 0 auto;
+  }
+  
+  .about-features {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
   }
 }
 
 @media (max-width: 768px) {
+  .about-content {
+    gap: 2rem;
+  }
+  
   .about-features {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .about-img-container {
+    max-width: 300px;
   }
   
   .about-experience {
-    bottom: -20px;
-    right: 20px;
+    bottom: -15px;
+    right: 15px;
+    padding: 1rem;
+  }
+  
+  .experience-number {
+    font-size: 1.8rem;
+  }
+  
+  .experience-text {
+    font-size: 0.8rem;
+  }
+  
+  .feature-icon {
+    width: 50px;
+    height: 50px;
+    
+    i {
+      font-size: 20px;
+    }
+  }
+  
+  .feature-text h4 {
+    font-size: 1.1rem;
+  }
+  
+  .feature-text p {
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 576px) {
+  .about-content {
+    gap: 1.5rem;
+  }
+  
   .about-heading {
     font-size: 2rem;
+  }
+  
+  .about-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  .about-img-container {
+    max-width: 250px;
   }
   
   .about-experience {
     position: relative;
     bottom: auto;
     right: auto;
-    margin: 2rem auto 0;
+    margin: 1.5rem auto 0;
+    max-width: 200px;
+  }
+  
+  .experience-number {
+    font-size: 1.5rem;
+  }
+  
+  .experience-text {
+    font-size: 0.75rem;
+  }
+  
+  .feature-icon {
+    width: 45px;
+    height: 45px;
+    
+    i {
+      font-size: 18px;
+    }
+  }
+  
+  .feature-text h4 {
+    font-size: 1rem;
+  }
+  
+  .feature-text p {
+    font-size: 0.85rem;
+  }
+}
+
+// Touch device optimizations
+@media (hover: none) and (pointer: coarse) {
+  .about-img-container:hover .about-img {
+    transform: none;
+  }
+  
+  .feature-item {
+    &:active {
+      transform: scale(0.98);
+    }
   }
 }
