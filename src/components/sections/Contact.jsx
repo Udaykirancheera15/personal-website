@@ -25,7 +25,11 @@ const Contact = () => {
     
     try {
       // Get the API base URL from environment or use default
-      const apiUrl = 'https://portfolio-backend-te2b.onrender.com/api/contact';
+      const baseUrl = import.meta.env.VITE_API_URL || 
+        (import.meta.env.MODE === 'production' 
+          ? 'https://portfolio-backend.onrender.com'  // Update with your actual backend URL
+          : 'http://localhost:3000');
+      const apiUrl = `${baseUrl}/api/contact`;
 
       
       // Send form data to the backend

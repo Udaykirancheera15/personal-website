@@ -67,14 +67,9 @@ router.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     availableEndpoints: ['/chat'],
     envStatus: {
-      gemini: !!process.env.GEMINI_API_KEY_1 || 
-             !!process.env.GEMINI_API_KEY_2 || 
-             !!process.env.GEMINI_API_KEY_3,
-      keysAvailable: [
-        !!process.env.GEMINI_API_KEY_1,
-        !!process.env.GEMINI_API_KEY_2,
-        !!process.env.GEMINI_API_KEY_3
-      ]
+      gemini: !!process.env.GEMINI_API_KEY,
+      openrouter: !!process.env.OPENROUTER_API_KEY,
+      huggingface: !!process.env.HUGGING_FACE_API_KEY
     }
   });
 });

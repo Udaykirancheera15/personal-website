@@ -4,8 +4,11 @@
  */
 import axios from 'axios';
 
-// Use VITE_API_URL if set, otherwise default to port 3000 (where your backend runs)
-const API_URL = import.meta.env.VITE_API_URL || 'https://portfolio-backend-te2b.onrender.com';
+// Use VITE_API_URL if set, otherwise default based on environment
+const API_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.MODE === 'production' 
+    ? 'https://portfolio-backend.onrender.com'  // Update with your actual backend URL
+    : 'http://localhost:3000');
 
 /**
  * Sends a message to the AI assistant and gets a response

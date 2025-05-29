@@ -13,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 3000; // Changed to match your AI server
 
 // CORS configuration
-const allowedOrigins = (process.env.CORS_ALLOWED_ORIGIN || 'http://localhost:5173,http://localhost:3000,https://portfolio-zoxg.onrender.com').split(',');
+const allowedOrigins = (process.env.CORS_ALLOWED_ORIGIN || 'http://localhost:5173,http://localhost:3000,https://cheera-udaykiran.onrender.com').split(',');
 
 const corsOptions = {
   origin: function (origin, callback) {
