@@ -18,7 +18,6 @@ services:
     runtime: static
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
-    plan: free
     pullRequestPreviewsEnabled: true
     headers:
       - path: /*
