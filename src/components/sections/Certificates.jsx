@@ -159,13 +159,13 @@ const Certificates = () => {
     setViewerTitle('');
   };
 
-  // Adjust navigation for mobile (show 1 card) vs desktop (show 3 cards)
+  // Mobile-first approach: show 1 card on mobile, 3 on desktop
   const cardsToShow = isMobile ? 1 : 3;
-  const maxIndex = certificatesData.length - cardsToShow;
+  const maxIndex = Math.max(0, certificatesData.length - cardsToShow);
   
   const goToPrevious = () => setCurrentIndex(prev => prev === 0 ? maxIndex : prev - 1);
-  const goToNext = () => setCurrentIndex(prev => prev === maxIndex ? 0 : prev + 1);
-  const goToDot = (idx) => setCurrentIndex(idx);
+  const goToNext = () => setCurrentIndex(prev => prev >= maxIndex ? 0 : prev + 1);
+  const goToDot = (idx) => setCurrentIndex(Math.min(idx, maxIndex));
 
   return (
     <section className="certificates" ref={ref}>
@@ -179,46 +179,88 @@ const Certificates = () => {
       </div>
       <div className="certificates-container">
         <div className="certificates-wrapper">
-          <motion.div
-            className="certificates-grid"
-            animate={{ 
-              transform: isMobile 
-                ? `translateX(-${currentIndex * 100}%)` 
-                : `translateX(-${currentIndex * 33.333}%)`
-            }}
-            transition={{ duration: 0.5, ease: [0.645, 0.045, 0.355, 1.000] }}
-          >
-            {certificatesData.map((cert, idx) => (
+          {isMobile ? (
+            // Mobile: Stack cards vertically with smooth transitions
+            <div className="certificates-mobile-container">
               <motion.div
-                key={cert.id}
-                className="certificate-card"
-                initial={{ opacity: 0, y: 30 }}
-                animate={isVisible ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.1 * (idx % 6), duration: 0.5 }}
-                whileHover={!isMobile ? { y: -10, rotateY: 5 } : {}}
+                className="certificates-mobile-grid"
+                key={currentIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
               >
-                <div className="certificate-header">
-                  <div className="certificate-icon">{cert.icon}</div>
-                  <h3 className="certificate-title">{cert.title}</h3>
-                  <div className="certificate-issuer">{cert.issuer}</div>
-                </div>
-                <div className="certificate-body">
-                  <p className="certificate-description">{cert.description}</p>
-                  <div className="certificate-footer">
-                    <div className="certificate-date">{cert.date}</div>
-                    <motion.div
-                      className="certificate-link"
-                      onClick={() => openViewer(cert.credential, cert.title, cert.canEmbed)}
-                      whileHover={!isMobile ? { x: 5 } : {}}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {cert.linkText || 'View Credential'} <FaExternalLinkAlt />
-                    </motion.div>
-                  </div>
-                </div>
+                {certificatesData.slice(currentIndex, currentIndex + 1).map((cert, idx) => (
+                  <motion.div
+                    key={cert.id}
+                    className="certificate-card mobile-card"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isVisible ? { opacity: 1, y: 0 } : {}}
+                    transition={{ delay: 0.1, duration: 0.5 }}
+                  >
+                    <div className="certificate-header">
+                      <div className="certificate-icon">{cert.icon}</div>
+                      <h3 className="certificate-title">{cert.title}</h3>
+                      <div className="certificate-issuer">{cert.issuer}</div>
+                    </div>
+                    <div className="certificate-body">
+                      <p className="certificate-description">{cert.description}</p>
+                      <div className="certificate-footer">
+                        <div className="certificate-date">{cert.date}</div>
+                        <motion.button
+                          className="certificate-link mobile-link"
+                          onClick={() => openViewer(cert.credential, cert.title, cert.canEmbed)}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          {cert.linkText || 'View Credential'} <FaExternalLinkAlt />
+                        </motion.button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
               </motion.div>
-            ))}
-          </motion.div>
+            </div>
+          ) : (
+            // Desktop: Horizontal sliding grid
+            <motion.div
+              className="certificates-grid"
+              animate={{ 
+                transform: `translateX(-${currentIndex * 33.333}%)`
+              }}
+              transition={{ duration: 0.5, ease: [0.645, 0.045, 0.355, 1.000] }}
+            >
+              {certificatesData.map((cert, idx) => (
+                <motion.div
+                  key={cert.id}
+                  className="certificate-card"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={isVisible ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.1 * (idx % 6), duration: 0.5 }}
+                  whileHover={{ y: -10, rotateY: 5 }}
+                >
+                  <div className="certificate-header">
+                    <div className="certificate-icon">{cert.icon}</div>
+                    <h3 className="certificate-title">{cert.title}</h3>
+                    <div className="certificate-issuer">{cert.issuer}</div>
+                  </div>
+                  <div className="certificate-body">
+                    <p className="certificate-description">{cert.description}</p>
+                    <div className="certificate-footer">
+                      <div className="certificate-date">{cert.date}</div>
+                      <motion.div
+                        className="certificate-link"
+                        onClick={() => openViewer(cert.credential, cert.title, cert.canEmbed)}
+                        whileHover={{ x: 5 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {cert.linkText || 'View Credential'} <FaExternalLinkAlt />
+                      </motion.div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
         </div>
         <div className="certificates-navigation">
           <motion.button 
