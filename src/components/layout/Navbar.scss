@@ -209,13 +209,125 @@ body.light-theme {
   }
 }
 
-/* Responsive: hide desktop links, show hamburger below 992px */
+/* Enhanced responsive navigation */
 @media (max-width: 992px) {
   .navbar-links { display: none !important; }
   .mobile-menu-toggle { display: flex !important; }
   .navbar-container { height: 60px; }
+  
+  .navbar {
+    padding: 1rem 4%;
+    
+    &.scrolled {
+      padding: 0.6rem 4%;
+    }
+  }
+  
+  .navbar-logo {
+    font-size: 1.6rem;
+  }
+  
+  .mobile-menu {
+    ul li {
+      margin: 1.5rem 0;
+      
+      a {
+        font-size: 1.8rem;
+        padding: 1rem 1.5rem;
+        min-height: 48px; // Touch target size
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
 }
 
 @media (max-width: 768px) {
   .navbar-container { height: 56px; }
+  
+  .navbar {
+    padding: 0.8rem 5%;
+    
+    &.scrolled {
+      padding: 0.5rem 5%;
+    }
+  }
+  
+  .navbar-logo {
+    font-size: 1.5rem;
+  }
+  
+  .mobile-menu-toggle {
+    padding: 0.5rem;
+    min-height: 44px;
+    min-width: 44px;
+    justify-content: center;
+    
+    span {
+      width: 25px;
+      height: 2px;
+    }
+  }
+  
+  .mobile-menu {
+    ul li {
+      margin: 1.2rem 0;
+      
+      a {
+        font-size: 1.6rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar {
+    padding: 0.6rem 4%;
+    
+    &.scrolled {
+      padding: 0.4rem 4%;
+    }
+  }
+  
+  .navbar-logo {
+    font-size: 1.4rem;
+  }
+  
+  .mobile-menu-toggle {
+    span {
+      width: 22px;
+    }
+  }
+  
+  .mobile-menu {
+    ul li {
+      margin: 1rem 0;
+      
+      a {
+        font-size: 1.4rem;
+        padding: 0.8rem 1rem;
+      }
+    }
+  }
+}
+
+// Touch device optimizations
+@media (hover: none) and (pointer: coarse) {
+  .mobile-menu-toggle {
+    min-height: 44px;
+    min-width: 44px;
+    
+    &:active {
+      background: rgba(87, 197, 182, 0.1);
+      border-radius: 8px;
+    }
+  }
+  
+  .mobile-menu ul li a {
+    &:active {
+      background: rgba(87, 197, 182, 0.1);
+      border-radius: 8px;
+    }
+  }
 }

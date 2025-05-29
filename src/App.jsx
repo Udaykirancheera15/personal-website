@@ -60,9 +60,16 @@ function App() {
         ],
         showActiveTooltip: true,
         scrollHorizontally: false,
-        responsiveWidth: 900,
+        responsiveWidth: 992, // Increased from 900 to 992 for better tablet experience
+        responsiveHeight: 600, // Add responsive height for better mobile experience
         verticalCentered: true,
         fitToSection: true,
+        scrollingSpeed: 700,
+        easingcss3: 'ease-out',
+        // Mobile optimizations
+        touchSensitivity: 5,
+        normalScrollElementTouchThreshold: 5,
+        bigSectionsDestination: 'top',
       });
       
       return () => {

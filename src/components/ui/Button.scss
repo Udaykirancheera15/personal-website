@@ -75,10 +75,52 @@ body.light-theme {
   }
 }
 
-// Responsive adjustments
+// Enhanced responsive adjustments for better mobile experience
 @media (max-width: 768px) {
   .btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    min-height: 48px; // Minimum touch target size
+    justify-content: center;
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 576px) {
+  .btn {
     padding: 0.8rem 1.5rem;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    min-height: 44px;
+  }
+}
+
+// Touch device optimizations
+@media (hover: none) and (pointer: coarse) {
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+    
+    // Remove hover effects on touch devices and use active states instead
+    &:hover {
+      transform: none;
+      box-shadow: inherit;
+    }
+    
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+  
+  .primary-btn:active {
+    box-shadow: 0 8px 20px rgba(87, 197, 182, 0.6);
+  }
+  
+  .secondary-btn:active {
+    background: rgba(87, 197, 182, 0.2);
+  }
+  
+  .accent-btn:active {
+    box-shadow: 0 8px 25px rgba(26, 95, 122, 0.5);
   }
 }
