@@ -13,8 +13,9 @@ services:
     healthCheckPath: /api/health
     
   # Frontend static site
-  - type: static
+  - type: web
     name: cheera-udaykiran
+    runtime: static
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     plan: free
