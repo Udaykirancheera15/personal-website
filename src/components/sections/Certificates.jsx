@@ -6,6 +6,23 @@ import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
 import { certificatesData } from '../../data/certificates';
 import './Certificates.scss';
 
+// Mobile detection hook
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  return isMobile;
+};
+
 const CertificateModal = ({ isOpen, onClose, url, title, canEmbed }) => {
   const [iframeError, setIframeError] = useState(false);
 
@@ -127,6 +144,7 @@ const Certificates = () => {
   const [viewerTitle, setViewerTitle] = useState('');
   const [canEmbed, setCanEmbed] = useState(true);
   const [ref, isVisible] = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
+  const isMobile = useIsMobile();
 
   const openViewer = (url, title, canEmbed = true) => {
     setViewerUrl(url);
@@ -141,8 +159,12 @@ const Certificates = () => {
     setViewerTitle('');
   };
 
-  const goToPrevious = () => setCurrentIndex(prev => prev === 0 ? certificatesData.length - 3 : prev - 1);
-  const goToNext = () => setCurrentIndex(prev => prev === certificatesData.length - 3 ? 0 : prev + 1);
+  // Adjust navigation for mobile (show 1 card) vs desktop (show 3 cards)
+  const cardsToShow = isMobile ? 1 : 3;
+  const maxIndex = certificatesData.length - cardsToShow;
+  
+  const goToPrevious = () => setCurrentIndex(prev => prev === 0 ? maxIndex : prev - 1);
+  const goToNext = () => setCurrentIndex(prev => prev === maxIndex ? 0 : prev + 1);
   const goToDot = (idx) => setCurrentIndex(idx);
 
   return (
@@ -159,7 +181,11 @@ const Certificates = () => {
         <div className="certificates-wrapper">
           <motion.div
             className="certificates-grid"
-            animate={{ transform: `translateX(-${currentIndex * 33.333}%)` }}
+            animate={{ 
+              transform: isMobile 
+                ? `translateX(-${currentIndex * 100}%)` 
+                : `translateX(-${currentIndex * 33.333}%)`
+            }}
             transition={{ duration: 0.5, ease: [0.645, 0.045, 0.355, 1.000] }}
           >
             {certificatesData.map((cert, idx) => (
@@ -169,7 +195,7 @@ const Certificates = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.1 * (idx % 6), duration: 0.5 }}
-                whileHover={{ y: -10, rotateY: 5 }}
+                whileHover={!isMobile ? { y: -10, rotateY: 5 } : {}}
               >
                 <div className="certificate-header">
                   <div className="certificate-icon">{cert.icon}</div>
@@ -183,7 +209,8 @@ const Certificates = () => {
                     <motion.div
                       className="certificate-link"
                       onClick={() => openViewer(cert.credential, cert.title, cert.canEmbed)}
-                      whileHover={{ x: 5 }}
+                      whileHover={!isMobile ? { x: 5 } : {}}
+                      whileTap={{ scale: 0.95 }}
                     >
                       {cert.linkText || 'View Credential'} <FaExternalLinkAlt />
                     </motion.div>
@@ -194,15 +221,25 @@ const Certificates = () => {
           </motion.div>
         </div>
         <div className="certificates-navigation">
-          <motion.button className="cert-nav-btn" onClick={goToPrevious} whileHover={{ y: -3 }} whileTap={{ scale: 0.95 }}>
+          <motion.button 
+            className="cert-nav-btn" 
+            onClick={goToPrevious} 
+            whileHover={!isMobile ? { y: -3 } : {}} 
+            whileTap={{ scale: 0.95 }}
+          >
             <FaChevronLeft />
           </motion.button>
-          <motion.button className="cert-nav-btn" onClick={goToNext} whileHover={{ y: -3 }} whileTap={{ scale: 0.95 }}>
+          <motion.button 
+            className="cert-nav-btn" 
+            onClick={goToNext} 
+            whileHover={!isMobile ? { y: -3 } : {}} 
+            whileTap={{ scale: 0.95 }}
+          >
             <FaChevronRight />
           </motion.button>
         </div>
         <div className="certificates-dots">
-          {Array.from({ length: certificatesData.length - 2 }).map((_, idx) => (
+          {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
             <div
               key={idx}
               className={`certificates-dot ${currentIndex === idx ? 'active' : ''}`}
