@@ -40,9 +40,8 @@ const categories = [
   { id: 'fullstack', label: 'Web', icon: <FaCode /> }
 ];
 
-
-  // Reduced to 2 projects per page to make cards larger
-  const projectsPerPage = 2;
+  // Mobile-first approach: 1 project per page on mobile, 2 on desktop
+  const projectsPerPage = isMobile ? 1 : 2;
 
   // Filter projects when active filter changes
   useEffect(() => {
@@ -148,36 +147,35 @@ const categories = [
         
         <div className="projects-showcase">
           <AnimatePresence mode="wait">
-            <motion.div
-              key={activeFilter + currentPage}
-              className="projects-grid"
-              variants={containerVariants}
-              initial="hidden"
-              animate={isVisible ? "visible" : "hidden"}
-              exit={{ opacity: 0 }}
-            >
-              {currentProjects.map((project, idx) => (
-                <motion.div
-                  key={project.id}
-                  className="project-card"
-                  variants={itemVariants}
-                  whileHover={!isMobile ? { 
-                    y: -5,
-                    boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)"
-                  } : {}}
-                  onClick={() => isMobile && setExpandedCard(expandedCard === project.id ? null : project.id)}
-                >
-                  <div className="project-image">
-                    <img src={project.image} alt={project.title} />
-                  </div>
-                  
-                  <div className={`project-overlay ${isMobile && expandedCard === project.id ? 'mobile-visible' : ''}`}>
-                    <div className="project-content">
+            {isMobile ? (
+              // Mobile: Single card with enhanced design
+              <motion.div
+                key={activeFilter + currentPage}
+                className="projects-mobile-container"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+              >
+                {currentProjects.map((project, idx) => (
+                  <motion.div
+                    key={project.id}
+                    className="project-card mobile-project-card"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.1, duration: 0.4 }}
+                  >
+                    <div className="project-image mobile-image">
+                      <img src={project.image} alt={project.title} />
+                      <div className="mobile-image-overlay"></div>
+                    </div>
+                    
+                    <div className="project-content mobile-content">
                       <h3 className="project-title">{project.title}</h3>
                       
                       <div className="project-category">
                         {project.categories.map((cat, i) => (
-                          <span key={i} className="project-tag">
+                          <span key={i} className="project-tag mobile-tag">
                             <span className="tag-icon">{getCategoryIcon(cat)}</span>
                             {cat}
                           </span>
@@ -186,49 +184,127 @@ const categories = [
                       
                       <p className="project-description">{project.description}</p>
                       
-
-											<div className="project-links">
-												{project.github ? (
-													<a href={project.github} target="_blank" rel="noopener noreferrer" className="project-link">
-														<FaGithub />
-														<span>Code</span>
-													</a>
-												) : (
-													<LinkHandler url="github.com/unavailable" type="github">
-														<span className="project-link">
-															<FaGithub />
-															<span>Code</span>
-														</span>
-													</LinkHandler>
-												)}
-												{project.demo ? (
-													<a href={project.demo} target="_blank" rel="noopener noreferrer" className="project-link">
-														<FaExternalLinkAlt />
-														<span>Demo</span>
-													</a>
-												) : (
-													<LinkHandler url="https://demo.unavailable" type="demo">
-														<span className="project-link">
-															<FaExternalLinkAlt />
-															<span>Demo</span>
-														</span>
-													</LinkHandler>
-												)}
-
-												{project.details && (
-													<LinkHandler url={project.details} type="details">
-														<span className="project-link">
-															<FaSearch />
-															<span>Details</span>
-														</span>
-													</LinkHandler>
-												)}
-											</div>
+                      <div className="project-links mobile-links">
+                        {project.github ? (
+                          <a href={project.github} target="_blank" rel="noopener noreferrer" className="project-link mobile-link">
+                            <FaGithub />
+                            <span>Code</span>
+                          </a>
+                        ) : (
+                          <LinkHandler url="github.com/unavailable" type="github">
+                            <span className="project-link mobile-link">
+                              <FaGithub />
+                              <span>Code</span>
+                            </span>
+                          </LinkHandler>
+                        )}
+                        {project.demo ? (
+                          <a href={project.demo} target="_blank" rel="noopener noreferrer" className="project-link mobile-link">
+                            <FaExternalLinkAlt />
+                            <span>Demo</span>
+                          </a>
+                        ) : (
+                          <LinkHandler url="https://demo.unavailable" type="demo">
+                            <span className="project-link mobile-link">
+                              <FaExternalLinkAlt />
+                              <span>Demo</span>
+                            </span>
+                          </LinkHandler>
+                        )}
+                        {project.details && (
+                          <LinkHandler url={project.details} type="details">
+                            <span className="project-link mobile-link">
+                              <FaSearch />
+                              <span>Details</span>
+                            </span>
+                          </LinkHandler>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              // Desktop: Grid layout with hover effects
+              <motion.div
+                key={activeFilter + currentPage}
+                className="projects-grid"
+                variants={containerVariants}
+                initial="hidden"
+                animate={isVisible ? "visible" : "hidden"}
+                exit={{ opacity: 0 }}
+              >
+                {currentProjects.map((project, idx) => (
+                  <motion.div
+                    key={project.id}
+                    className="project-card"
+                    variants={itemVariants}
+                    whileHover={{ 
+                      y: -5,
+                      boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)"
+                    }}
+                  >
+                    <div className="project-image">
+                      <img src={project.image} alt={project.title} />
+                    </div>
+                    
+                    <div className="project-overlay">
+                      <div className="project-content">
+                        <h3 className="project-title">{project.title}</h3>
+                        
+                        <div className="project-category">
+                          {project.categories.map((cat, i) => (
+                            <span key={i} className="project-tag">
+                              <span className="tag-icon">{getCategoryIcon(cat)}</span>
+                              {cat}
+                            </span>
+                          ))}
+                        </div>
+                        
+                        <p className="project-description">{project.description}</p>
+                        
+                        <div className="project-links">
+                          {project.github ? (
+                            <a href={project.github} target="_blank" rel="noopener noreferrer" className="project-link">
+                              <FaGithub />
+                              <span>Code</span>
+                            </a>
+                          ) : (
+                            <LinkHandler url="github.com/unavailable" type="github">
+                              <span className="project-link">
+                                <FaGithub />
+                                <span>Code</span>
+                              </span>
+                            </LinkHandler>
+                          )}
+                          {project.demo ? (
+                            <a href={project.demo} target="_blank" rel="noopener noreferrer" className="project-link">
+                              <FaExternalLinkAlt />
+                              <span>Demo</span>
+                            </a>
+                          ) : (
+                            <LinkHandler url="https://demo.unavailable" type="demo">
+                              <span className="project-link">
+                                <FaExternalLinkAlt />
+                                <span>Demo</span>
+                              </span>
+                            </LinkHandler>
+                          )}
+                          {project.details && (
+                            <LinkHandler url={project.details} type="details">
+                              <span className="project-link">
+                                <FaSearch />
+                                <span>Details</span>
+                              </span>
+                            </LinkHandler>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
           </AnimatePresence>
           
           {filteredProjects.length === 0 && (
