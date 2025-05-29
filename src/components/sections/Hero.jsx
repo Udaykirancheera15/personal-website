@@ -90,10 +90,10 @@ const Hero = () => {
           </motion.div>
           <motion.h1 className="hero-title" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.5 }}>
             Uday Kiran
-            <span className="hero-position">Software Engineer / AI Researcher</span>
+            <span className="hero-position">Software Engineer & AI Researcher</span>
           </motion.h1>
           <motion.p className="hero-description" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.5 }}>
-		Driven by boundless curiosity for cutting-edge technologies in machine learning, cybersecurity, and DevOps. I have developed quantum-enhanced AI models, graph neural networks for threat detection. From medical AI applications to network security solutions, I tackle complex challenges with innovative approaches.
+		Driven by boundless curiosity for cutting-edge technologies in machine learning and cybersecurity. I have developed quantum-enhanced AI models, graph neural networks for threat detection. From medical AI applications to network security solutions, I tackle complex challenges with innovative approaches.
           </motion.p>
           <motion.div className="hero-buttons" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.5 }}>
             <Button 
