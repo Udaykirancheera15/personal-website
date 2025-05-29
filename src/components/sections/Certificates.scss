@@ -298,7 +298,8 @@ body.light-theme {
 .certificates-mobile-container {
   width: 100%;
   overflow: hidden;
-  padding: 1rem 0;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .certificates-mobile-grid {
@@ -309,15 +310,16 @@ body.light-theme {
 }
 
 .certificate-card.mobile-card {
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
+  width: calc(100% - 2rem);
+  max-width: calc(100vw - 4rem);
+  margin: 0 auto;
   border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   overflow: hidden;
+  box-sizing: border-box;
   
   .certificate-header {
     padding: 2rem 1.5rem 1.5rem;
@@ -438,7 +440,7 @@ body.light-theme {
   }
   
   .certificates-container {
-    padding: 0 1rem;
+    padding: 0 0.5rem;
   }
   
   .certificates-wrapper {
