@@ -4,7 +4,7 @@ const config = {
     API_BASE_URL: 'http://localhost:3000',
   },
   production: {
-    API_BASE_URL: 'https://portfolio-backend.onrender.com', // Replace with your actual backend service URL
+    API_BASE_URL: 'https://portfolio-backend-v6dn.onrender.com', // Replace with your actual backend service URL
   }
 };
 
