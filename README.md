@@ -46,5 +46,5 @@ A sleek, responsive portfolio website with 3D animations, dark/light mode, and a
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/portfolio.git
-   cd portfolio
+   git clone https://github.com/Udaykirancheera15/Portfolio.git
+   cd Portfolio
