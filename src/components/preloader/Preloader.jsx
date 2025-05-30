@@ -243,7 +243,7 @@ const Preloader = () => {
               <span className="tagline-word tagline-word--highlight" data-word="Curiosity"></span>
             </div>
             <div className="tagline-line tagline-line--2">
-              <span className="tagline-word" data-word="Powered"></span>
+              <span className="tagline-word" data-word="Fueled"></span>
               <span className="tagline-word" data-word="by"></span>
               <span className="tagline-word tagline-word--highlight" data-word="Innovation"></span>
             </div>
