@@ -22,7 +22,7 @@ A sleek, responsive portfolio website with 3D animations, dark/light mode, and a
 - **3D Animations**: Immersive 3D elements using Three.js/React Three Fiber
 - **Smooth Animations**: Scroll-based animations and transitions using GSAP and Framer Motion
 - **Snap Scrolling**: Smooth section-to-section navigation
-- **AI Assistant**: Integrated AI chat widget powered by Claude, Mistral, or other LLMs
+- **AI Assistant**: Integrated AI chat widget powered by Gemini, OpenRouter
 - **Accessibility**: Optimized for accessibility, SEO, and performance
 - **Theme Toggle**: Light/dark mode support
 
@@ -33,7 +33,7 @@ A sleek, responsive portfolio website with 3D animations, dark/light mode, and a
 - **3D Graphics**: Three.js with React Three Fiber
 - **Smooth Scrolling**: Lenis for smooth scroll behavior
 - **Backend**: Node.js/Express for AI Assistant proxy
-- **AI Integration**: OpenRouter, Gemini, or Groq API
+- **AI Integration**: OpenRouter, Gemini
 
 ## Getting Started
 
