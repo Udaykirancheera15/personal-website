@@ -8,7 +8,7 @@ export const certificatesData = [
     date: 'Dec 2023',
     description: 'Comprehensive program covering big data technologies, distributed systems, and data analytics with hands-on projects and real-world applications.',
     icon: <FaDatabase />,
-    credential: 'https://credentials.edx.org/records/programs/shared/d29c5b1a66ba4090b7509c056736d69b',
+    credential: 'https://credentials.edx.org/credentials/f8061338d6ea443181fc3b11b24a49bb/',
     canEmbed: false
   },
   {
@@ -18,7 +18,7 @@ export const certificatesData = [
     date: 'Nov 2023',
     description: 'Advanced program in cybersecurity covering network security, cryptography, secure coding practices, and ethical hacking techniques.',
     icon: <FaShieldAlt />,
-    credential: 'https://credentials.edx.org/records/programs/shared/027569b35dc6468ab934e4c483476af3',
+    credential: 'https://credentials.edx.org/credentials/79e1897ca05a4100b92b97687771d6eb/',
     canEmbed: false
   },
   {
