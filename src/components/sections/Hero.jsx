@@ -134,7 +134,7 @@ const Hero = () => {
           <div className="image-container">
             <div className="image-backdrop"></div>
             <div className="profile-image-wrap">
-              <img src="/assets/images/Photo.png" alt="Uday Kiran" className="profile-image" />
+              <img src="/assets/images/profile.jpg" alt="Uday Kiran" className="profile-image" />
             </div>
             <div className="image-frame"></div>
           </div>
