@@ -5,9 +5,8 @@ import { FaCode, FaDesktop, FaServer, FaDatabase, FaMobileAlt, FaTools, FaCloud,
 import { skillsData } from '../../data/skills';
 import './Skills.scss';
 
-// Define categories with icons
+// Define categories with icons (removed 'All Skills')
 const categories = [
-  { id: 'all', label: 'All Skills' },
   { id: 'backend', label: 'Backend', icon: <FaServer /> },
   { id: 'database', label: 'Database', icon: <FaDatabase /> },
   { id: 'devops', label: 'DevOps', icon: <FaTools /> },
@@ -39,15 +38,13 @@ const itemVariants = {
   }
 };
 
-// Limit the number of skills to display per category to ensure all fit on screen
+// Get skills for the selected category
 const getVisibleSkills = (skills, category) => {
-  // Filter skills by category
-  const filtered = category === 'all' 
-    ? skills 
-    : skills.filter(skill => skill.category === category);
+  // Filter skills by category (no 'all' option anymore)
+  const filtered = skills.filter(skill => skill.category === category);
   
-  // Limit to a maximum number that can fit on screen (adjust as needed)
-  return filtered.slice(0, 8); // Show max 8 skill cards
+  // Return all skills for the selected category
+  return filtered;
 };
 
 // Skill Card Component
@@ -80,8 +77,8 @@ const SkillCard = ({ skill }) => {
       </div>
       
       <ul className="skill-list">
-        {/* Limit to max 4 skills per card for space */}
-        {skill.skills.slice(0, 4).map((item, j) => (
+        {/* Show all skills for better visibility */}
+        {skill.skills.map((item, j) => (
           <li key={j}>{item}</li>
         ))}
       </ul>
@@ -90,7 +87,7 @@ const SkillCard = ({ skill }) => {
 };
 
 const Skills = () => {
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeCategory, setActiveCategory] = useState('backend'); // Default to backend
   const [searchTerm, setSearchTerm] = useState('');
   const [ref, isVisible] = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
   const [visibleSkills, setVisibleSkills] = useState([]);
