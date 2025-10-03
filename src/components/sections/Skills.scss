@@ -47,7 +47,7 @@
   display: flex;
   align-items: flex-start;
   gap: 2rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem; /* Reduced margin */
   
   /* Windows-specific fixes */
   @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
@@ -170,26 +170,28 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  height: calc(100vh - 300px); /* Fit within viewport */
 }
 
 .skills-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive columns with minimum width */
-  gap: 1.5rem;
+  display: flex;
+  justify-content: flex-end; /* Position cards to the right */
+  gap: 1rem;
   width: 100%;
   flex: 1;
-  align-items: start; /* Align cards to top */
+  align-items: flex-start;
 }
 
 .skill-card {
   background-color: var(--darker-color);
-  border-radius: 15px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
   position: relative;
   overflow: hidden;
-  min-height: 320px; /* Ensure consistent height */
+  width: 280px; /* More compact width */
+  max-height: 350px; /* Reduced height to fit viewport better */
   border: 1px solid rgba(87, 197, 182, 0.2);
   display: flex;
   flex-direction: column;
@@ -232,14 +234,14 @@
 .card-header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
 }
 
 .skill-icon {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
+  width: 35px;
+  height: 35px;
+  min-width: 35px;
   background-color: rgba(87, 197, 182, 0.1);
   border-radius: 8px;
   display: flex;
@@ -254,7 +256,7 @@
 }
 
 .skill-title {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: var(--light-color);
   margin: 0;
   font-weight: 600;
@@ -262,7 +264,7 @@
 }
 
 .proficiency-container {
-  margin-bottom: 1rem;
+  margin-bottom: 0.6rem;
 }
 
 .proficiency-label {
@@ -340,14 +342,31 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.3rem;
+  max-height: 200px; /* More compact height */
+  overflow-y: auto; /* Allow scrolling if needed */
+  
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(87, 197, 182, 0.1);
+    border-radius: 2px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 2px;
+  }
   
   li {
     display: flex;
     align-items: center;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: rgba(255, 255, 255, 0.8);
-    padding: 0.3rem 0;
+    padding: 0.2rem 0;
     transition: color 0.2s ease;
     
     &:hover {
@@ -357,11 +376,11 @@
     &::before {
       content: '';
       display: inline-block;
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       background-color: var(--primary-color);
-      margin-right: 10px;
+      margin-right: 8px;
       flex-shrink: 0;
       transition: transform 0.2s ease;
     }
@@ -430,18 +449,12 @@ body.light-theme {
 
 // Responsive fixes
 @media (max-width: 1200px) {
-  .skills-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.2rem;
+  .skill-card {
+    width: 300px;
   }
 }
 
 @media (max-width: 900px) {
-  .skills-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1rem;
-  }
-  
   .skills-top {
     flex-direction: column;
     gap: 1.5rem;
@@ -454,16 +467,29 @@ body.light-theme {
   .skill-categories {
     justify-content: flex-start;
   }
+  
+  .skills-grid {
+    justify-content: center;
+  }
+  
+  .skill-card {
+    width: 280px;
+  }
 }
 
 @media (max-width: 768px) {
   .skills {
-    height: 100vh; // Keep it viewport height
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .skills-cards-container {
+    height: auto;
   }
   
   .skills-grid {
-    grid-template-columns: 1fr; // 1 column
-    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
   }
   
   .section-header {
@@ -471,8 +497,10 @@ body.light-theme {
   }
   
   .skill-card {
+    width: 100%;
+    max-width: 350px;
+    max-height: none;
     padding: 1.2rem;
-    min-height: 280px;
   }
   
   .skill-title {
