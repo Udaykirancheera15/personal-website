@@ -4,7 +4,11 @@
  */
 const express = require('express');
 const router = express.Router();
-const { getGeminiResponse } = require('../utils/aiProviders.cjs');
+const { 
+  getAIResponse, 
+  getProviderStatus, 
+  resetProviderStatus 
+} = require('../utils/aiProviders.cjs');
 
 // Middleware to log requests
 router.use((req, res, next) => {
@@ -30,8 +34,8 @@ router.post('/chat', async (req, res) => {
     const trimmedMessage = message.trim();
     console.log('Processing message:', trimmedMessage);
 
-    // Use Gemini as the AI provider
-    const response = await getGeminiResponse(trimmedMessage);
+    // Use intelligent AI provider rotation
+    const response = await getAIResponse(trimmedMessage);
     
     console.log('AI response generated successfully');
     
@@ -60,18 +64,50 @@ router.post('/chat', async (req, res) => {
   }
 });
 
-// Health check endpoint
+// Health check endpoint with provider status
 router.get('/health', (req, res) => {
+  const providerInfo = getProviderStatus();
+  
   res.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
-    availableEndpoints: ['/chat'],
-    envStatus: {
-      gemini: !!process.env.GEMINI_API_KEY,
-      openrouter: !!process.env.OPENROUTER_API_KEY,
-      huggingface: !!process.env.HUGGING_FACE_API_KEY
+    availableEndpoints: ['/chat', '/status', '/reset'],
+    ...providerInfo
+  });
+});
+
+// Detailed provider status endpoint
+router.get('/status', (req, res) => {
+  const providerInfo = getProviderStatus();
+  
+  res.json({
+    timestamp: new Date().toISOString(),
+    system: 'AI Provider Rotation System',
+    ...providerInfo,
+    statistics: {
+      totalProviders: Object.keys(providerInfo.providers).length,
+      availableProviders: Object.values(providerInfo.providers).filter(p => p.available).length,
+      providersWithErrors: Object.values(providerInfo.providers).filter(p => p.errorCount > 0).length
     }
   });
+});
+
+// Reset provider status endpoint (for admin use)
+router.post('/reset', (req, res) => {
+  try {
+    resetProviderStatus();
+    res.json({
+      success: true,
+      message: 'All provider statuses have been reset',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 // Test endpoint for debugging

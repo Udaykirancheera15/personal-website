@@ -1,10 +1,161 @@
 /**
- * AI Providers implementation
+ * AI Providers implementation with intelligent rotation and fallback
  * This file contains functions to interact with different AI providers
+ * and automatically switches between them when daily limits are reached
  */
-require('dotenv').config(); // Top of aiProviders.cjs
-console.log('Gemini API Key exists:', !!process.env.GEMINI_API_KEY);
+require('dotenv').config();
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+
+// Provider status tracking
+const PROVIDER_STATUS_FILE = path.join(__dirname, '../provider-status.json');
+
+// Initialize provider status
+let providerStatus = {
+  gemini: { available: true, lastError: null, errorCount: 0, lastUsed: null },
+  openrouter: { available: true, lastError: null, errorCount: 0, lastUsed: null },
+  huggingface: { available: true, lastError: null, errorCount: 0, lastUsed: null }
+};
+
+// Load existing provider status
+try {
+  if (fs.existsSync(PROVIDER_STATUS_FILE)) {
+    const savedStatus = JSON.parse(fs.readFileSync(PROVIDER_STATUS_FILE, 'utf8'));
+    providerStatus = { ...providerStatus, ...savedStatus };
+  }
+} catch (error) {
+  console.warn('Could not load provider status:', error.message);
+}
+
+// Save provider status
+const saveProviderStatus = () => {
+  try {
+    fs.writeFileSync(PROVIDER_STATUS_FILE, JSON.stringify(providerStatus, null, 2));
+  } catch (error) {
+    console.warn('Could not save provider status:', error.message);
+  }
+};
+
+// Check API key availability
+const checkAPIKeys = () => {
+  const keys = {
+    gemini: !!process.env.GEMINI_API_KEY,
+    openrouter: !!process.env.OPENROUTER_API_KEY,
+    huggingface: !!process.env.HUGGING_FACE_API_KEY
+  };
+  console.log('API Keys Status:', keys);
+  return keys;
+};
+
+checkAPIKeys();
+
+// Error detection functions
+const isRateLimitError = (error) => {
+  if (!error.response) return false;
+  
+  const status = error.response.status;
+  const data = error.response.data;
+  const message = error.message?.toLowerCase() || '';
+  
+  // Common rate limit indicators
+  return (
+    status === 429 || // Too Many Requests
+    status === 403 || // Forbidden (often used for quota exceeded)
+    (data && typeof data === 'string' && (
+      data.includes('quota') ||
+      data.includes('limit') ||
+      data.includes('rate') ||
+      data.includes('exceeded')
+    )) ||
+    message.includes('quota') ||
+    message.includes('limit') ||
+    message.includes('rate')
+  );
+};
+
+const isTemporaryError = (error) => {
+  if (!error.response) return true; // Network errors are usually temporary
+  
+  const status = error.response.status;
+  return status >= 500 || status === 429 || status === 503;
+};
+
+// Provider management functions
+const markProviderError = (providerName, error) => {
+  const isRateLimit = isRateLimitError(error);
+  const isTemp = isTemporaryError(error);
+  
+  providerStatus[providerName].errorCount++;
+  providerStatus[providerName].lastError = {
+    message: error.message,
+    status: error.response?.status,
+    isRateLimit,
+    isTemporary: isTemp,
+    timestamp: new Date().toISOString()
+  };
+  
+  // Mark as unavailable if it's a rate limit error or too many errors
+  if (isRateLimit || providerStatus[providerName].errorCount >= 3) {
+    providerStatus[providerName].available = false;
+    console.log(`🚫 Provider ${providerName} marked as unavailable:`, {
+      isRateLimit,
+      errorCount: providerStatus[providerName].errorCount,
+      error: error.message
+    });
+  }
+  
+  saveProviderStatus();
+};
+
+const markProviderSuccess = (providerName) => {
+  providerStatus[providerName].available = true;
+  providerStatus[providerName].errorCount = 0;
+  providerStatus[providerName].lastError = null;
+  providerStatus[providerName].lastUsed = new Date().toISOString();
+  saveProviderStatus();
+};
+
+const getNextAvailableProvider = () => {
+  const apiKeys = checkAPIKeys();
+  const availableProviders = [];
+  
+  // Check each provider
+  for (const [provider, status] of Object.entries(providerStatus)) {
+    if (apiKeys[provider] && status.available) {
+      availableProviders.push({
+        name: provider,
+        lastUsed: status.lastUsed,
+        errorCount: status.errorCount
+      });
+    }
+  }
+  
+  if (availableProviders.length === 0) {
+    // Reset all providers if none are available (daily reset scenario)
+    console.log('🔄 No providers available, resetting all...');
+    Object.keys(providerStatus).forEach(provider => {
+      if (apiKeys[provider]) {
+        providerStatus[provider].available = true;
+        providerStatus[provider].errorCount = 0;
+      }
+    });
+    saveProviderStatus();
+    return getNextAvailableProvider();
+  }
+  
+  // Sort by last used (least recently used first) and error count
+  availableProviders.sort((a, b) => {
+    if (a.errorCount !== b.errorCount) {
+      return a.errorCount - b.errorCount;
+    }
+    if (!a.lastUsed) return -1;
+    if (!b.lastUsed) return 1;
+    return new Date(a.lastUsed) - new Date(b.lastUsed);
+  });
+  
+  return availableProviders[0].name;
+};
 
 // Load resume data for AI context
 const resumeData = {
@@ -264,95 +415,128 @@ If someone asks about hiring, collaboration, or contacting Uday, direct them to 
 `;
 
 /**
+ * Main AI response function with intelligent provider rotation
+ * @param {string} userMessage - The message from the user
+ * @returns {Promise<string>} - The AI response
+ */
+const getAIResponse = async (userMessage) => {
+  const maxRetries = 3;
+  let lastError = null;
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const provider = getNextAvailableProvider();
+    
+    if (!provider) {
+      throw new Error('No AI providers available');
+    }
+    
+    console.log(`🤖 Attempting with provider: ${provider} (attempt ${attempt + 1}/${maxRetries})`);
+    
+    try {
+      let response;
+      
+      switch (provider) {
+        case 'gemini':
+          response = await callGemini(userMessage);
+          break;
+        case 'openrouter':
+          response = await callOpenRouter(userMessage);
+          break;
+        case 'huggingface':
+          response = await callHuggingFace(userMessage);
+          break;
+        default:
+          throw new Error(`Unknown provider: ${provider}`);
+      }
+      
+      markProviderSuccess(provider);
+      console.log(`✅ Success with provider: ${provider}`);
+      return response;
+      
+    } catch (error) {
+      console.error(`❌ Provider ${provider} failed:`, error.message);
+      markProviderError(provider, error);
+      lastError = error;
+      
+      // If it's not a rate limit error, try the same provider again
+      if (!isRateLimitError(error) && attempt < maxRetries - 1) {
+        continue;
+      }
+    }
+  }
+  
+  // If all providers failed, return a friendly fallback message
+  console.error('All AI providers failed:', lastError?.message);
+  return "Hi there! 👋 I'm Taurus, Uday's AI assistant. I'm currently experiencing some technical difficulties, but I'm here to help! You can reach Uday directly at cheeraudaykiran@gmail.com for any inquiries. 😊";
+};
+
+/**
  * Get a response from Google's Gemini API
  * @param {string} userMessage - The message from the user
  * @returns {Promise<string>} - The AI response
  */
-const getGeminiResponse = async (userMessage) => {
-  try {
-    const apiKey = process.env.GEMINI_API_KEY;
-    
-    if (!apiKey) {
-      console.error('Gemini API key is missing');
-      throw new Error('Gemini API key is not configured');
-    }
-
-    console.log('Calling Gemini API...');
-    
-    const requestBody = {
-      contents: [
-        {
-          parts: [
-            { text: `${systemPrompt}\n\nUser question: ${userMessage}` }
-          ]
-        }
-      ],
-      generationConfig: {
-        temperature: 0.7,
-        topK: 40,
-        topP: 0.95,
-        maxOutputTokens: 1024,
-      },
-      safetySettings: [
-        {
-          category: "HARM_CATEGORY_HARASSMENT",
-          threshold: "BLOCK_MEDIUM_AND_ABOVE"
-        },
-        {
-          category: "HARM_CATEGORY_HATE_SPEECH",
-          threshold: "BLOCK_MEDIUM_AND_ABOVE"
-        },
-        {
-          category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-          threshold: "BLOCK_MEDIUM_AND_ABOVE"
-        },
-        {
-          category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-          threshold: "BLOCK_MEDIUM_AND_ABOVE"
-        }
-      ]
-    };
-
-
-const response = await axios.post(
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
-  requestBody,
-  {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    timeout: 30000 // 30 second timeout
+const callGemini = async (userMessage) => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error('Gemini API key is not configured');
   }
-);
 
-
-
-    console.log('Gemini API response received');
-
-    // Check if we have a valid response
-    if (response.data && response.data.candidates && response.data.candidates.length > 0) {
-      const candidate = response.data.candidates[0];
-      
-      if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
-        return candidate.content.parts[0].text;
+  const requestBody = {
+    contents: [
+      {
+        parts: [
+          { text: `${systemPrompt}\n\nUser question: ${userMessage}` }
+        ]
       }
-    }
+    ],
+    generationConfig: {
+      temperature: 0.7,
+      topK: 40,
+      topP: 0.95,
+      maxOutputTokens: 1024,
+    },
+    safetySettings: [
+      {
+        category: "HARM_CATEGORY_HARASSMENT",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE"
+      },
+      {
+        category: "HARM_CATEGORY_HATE_SPEECH",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE"
+      },
+      {
+        category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE"
+      },
+      {
+        category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE"
+      }
+    ]
+  };
 
-    throw new Error('Invalid response structure from Gemini API');
-    
-  } catch (error) {
-    console.error("Gemini API error:", error?.response?.data || error.message);
-    
-    // More specific error handling
-    if (error.response) {
-      console.error('Response status:', error.response.status);
-      console.error('Response data:', error.response.data);
+  const response = await axios.post(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
+    requestBody,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      timeout: 30000
     }
+  );
+
+  // Check if we have a valid response
+  if (response.data && response.data.candidates && response.data.candidates.length > 0) {
+    const candidate = response.data.candidates[0];
     
-    // Fall back to OpenRouter if Gemini fails
-    console.log('Falling back to OpenRouter...');
-    return callOpenRouter(userMessage);
+    if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
+      return candidate.content.parts[0].text;
+    }
   }
+
+  throw new Error('Invalid response structure from Gemini API');
 };
 
 /**
@@ -360,107 +544,125 @@ const response = await axios.post(
  * @param {string} userMessage - The message from the user
  * @returns {Promise<string>} - The AI response
  */
-const getHuggingFaceResponse = async (userMessage) => {
-  try {
-    const apiKey = process.env.HUGGING_FACE_API_KEY;
-    
-    if (!apiKey) {
-      throw new Error('Hugging Face API key is not configured');
-    }
-
-    console.log('Calling Hugging Face API...');
-
-    const response = await axios.post(
-      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
-      {
-        inputs: `<s>[INST] ${systemPrompt}\n\nUser: ${userMessage} [/INST]`,
-        parameters: {
-          max_new_tokens: 1024,
-          temperature: 0.7,
-          top_p: 0.95,
-          do_sample: true,
-          return_full_text: false
-        }
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        timeout: 30000
-      }
-    );
-
-    console.log('Hugging Face API response received');
-
-    if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-      return response.data[0].generated_text || "I'm here to help! Could you please rephrase your question? 😊";
-    }
-
-    throw new Error('Invalid response from Hugging Face API');
-    
-  } catch (error) {
-    console.error("Hugging Face API error:", error?.response?.data || error.message);
-    return "Sorry, I'm having trouble connecting to my AI services right now. Please try again later! 🙁";
+const callHuggingFace = async (userMessage) => {
+  const apiKey = process.env.HUGGING_FACE_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error('Hugging Face API key is not configured');
   }
+
+  const response = await axios.post(
+    "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
+    {
+      inputs: `<s>[INST] ${systemPrompt}\n\nUser: ${userMessage} [/INST]`,
+      parameters: {
+        max_new_tokens: 1024,
+        temperature: 0.7,
+        top_p: 0.95,
+        do_sample: true,
+        return_full_text: false
+      }
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      timeout: 30000
+    }
+  );
+
+  if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+    return response.data[0].generated_text || "I'm here to help! Could you please rephrase your question? 😊";
+  }
+
+  throw new Error('Invalid response from Hugging Face API');
 };
 
 /**
- * Fallback to OpenRouter API
+ * OpenRouter API call
  * @param {string} userMessage - The message from the user
  * @returns {Promise<string>} - The AI response
  */
 const callOpenRouter = async (userMessage) => {
-  try {
-    // Clean up API key if it has "Bearer " prefix by accident
-    const apiKeyRaw = process.env.OPENROUTER_API_KEY;
-    if (!apiKeyRaw) {
-      throw new Error('OpenRouter API key is not configured');
-    }
-    const apiKey = apiKeyRaw.startsWith('Bearer ') ? apiKeyRaw.slice(7) : apiKeyRaw;
-
-    console.log('Calling OpenRouter API...');
-
-    const response = await axios.post(
-      "https://openrouter.ai/api/v1/chat/completions",
-      {
-        model: "openai/gpt-3.5-turbo",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userMessage }
-        ],
-        temperature: 0.7,
-        max_tokens: 1024
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          // These headers are optional and might be ignored by the API
-          "HTTP-Referer": "http://localhost:5173",
-          "X-Title": "CheeraPortfolio",
-        },
-        timeout: 30000,
-      }
-    );
-
-    console.log('OpenRouter API response received');
-
-    if (response.data && response.data.choices && response.data.choices.length > 0) {
-      return response.data.choices[0].message.content;
-    }
-
-    throw new Error('Invalid response from OpenRouter API');
-    
-  } catch (error) {
-    console.error("OpenRouter error:", error?.response?.data || error.message);
-    return "Hi there! 👋 I'm Taurus, Uday's AI assistant. I'm here to help answer questions about Uday 😊 but unfortunately limit was exhausted. Please Comeback later.";
+  // Clean up API key if it has "Bearer " prefix by accident
+  const apiKeyRaw = process.env.OPENROUTER_API_KEY;
+  if (!apiKeyRaw) {
+    throw new Error('OpenRouter API key is not configured');
   }
+  const apiKey = apiKeyRaw.startsWith('Bearer ') ? apiKeyRaw.slice(7) : apiKeyRaw;
+
+  const response = await axios.post(
+    "https://openrouter.ai/api/v1/chat/completions",
+    {
+      model: "openai/gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userMessage }
+      ],
+      temperature: 0.7,
+      max_tokens: 1024
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:5173",
+        "X-Title": "CheeraPortfolio",
+      },
+      timeout: 30000,
+    }
+  );
+
+  if (response.data && response.data.choices && response.data.choices.length > 0) {
+    return response.data.choices[0].message.content;
+  }
+
+  throw new Error('Invalid response from OpenRouter API');
 };
 
+// Additional utility functions
+const getProviderStatus = () => {
+  return {
+    providers: providerStatus,
+    apiKeys: checkAPIKeys(),
+    nextProvider: getNextAvailableProvider()
+  };
+};
+
+const resetProviderStatus = () => {
+  Object.keys(providerStatus).forEach(provider => {
+    providerStatus[provider] = {
+      available: true,
+      lastError: null,
+      errorCount: 0,
+      lastUsed: null
+    };
+  });
+  saveProviderStatus();
+  console.log('🔄 All provider statuses reset');
+};
+
+// Backward compatibility - keep the old function name
+const getGeminiResponse = getAIResponse;
+
 module.exports = { 
-  getGeminiResponse, 
-  getHuggingFaceResponse,
-  callOpenRouter 
+  // Main function (new intelligent system)
+  getAIResponse,
+  
+  // Backward compatibility
+  getGeminiResponse,
+  
+  // Individual provider functions
+  callGemini,
+  callOpenRouter,
+  callHuggingFace,
+  
+  // Utility functions
+  getProviderStatus,
+  resetProviderStatus,
+  
+  // Legacy exports (deprecated but kept for compatibility)
+  getHuggingFaceResponse: callHuggingFace
 };
 

@@ -1,0 +1,20 @@
+{
+  "gemini": {
+    "available": true,
+    "lastError": null,
+    "errorCount": 0,
+    "lastUsed": "2025-10-03T13:32:06.980Z"
+  },
+  "openrouter": {
+    "available": true,
+    "lastError": null,
+    "errorCount": 0,
+    "lastUsed": null
+  },
+  "huggingface": {
+    "available": true,
+    "lastError": null,
+    "errorCount": 0,
+    "lastUsed": null
+  }
+}
