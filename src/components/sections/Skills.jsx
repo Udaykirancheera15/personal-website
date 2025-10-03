@@ -62,6 +62,23 @@ const SkillCard = ({ skill }) => {
         <div className="skill-icon">{skill.icon}</div>
         <h3 className="skill-title">{skill.title}</h3>
       </div>
+      
+      {/* Proficiency Bar */}
+      <div className="proficiency-container">
+        <div className="proficiency-label">
+          <span>Proficiency</span>
+          <span className="proficiency-value">{skill.proficiency}%</span>
+        </div>
+        <div className="proficiency-bar">
+          <motion.div 
+            className="proficiency-fill"
+            initial={{ width: 0 }}
+            animate={{ width: `${skill.proficiency}%` }}
+            transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+          />
+        </div>
+      </div>
+      
       <ul className="skill-list">
         {/* Limit to max 4 skills per card for space */}
         {skill.skills.slice(0, 4).map((item, j) => (
@@ -74,13 +91,26 @@ const SkillCard = ({ skill }) => {
 
 const Skills = () => {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
   const [ref, isVisible] = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
   const [visibleSkills, setVisibleSkills] = useState([]);
   
-  // Update visible skills when category changes
+  // Update visible skills when category or search term changes
   useEffect(() => {
-    setVisibleSkills(getVisibleSkills(skillsData, activeCategory));
-  }, [activeCategory]);
+    let filtered = getVisibleSkills(skillsData, activeCategory);
+    
+    if (searchTerm) {
+      filtered = filtered.filter(skill => 
+        skill.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        skill.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        skill.skills.some(skillItem => 
+          skillItem.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
+    
+    setVisibleSkills(filtered);
+  }, [activeCategory, searchTerm]);
 
   return (
     <section className="skills" ref={ref}>
@@ -111,22 +141,39 @@ const Skills = () => {
             </p>
           </motion.div>
           
-          <div className="skill-categories">
-            {categories.map((cat, idx) => (
-              <motion.div
-                key={cat.id}
-                className={`skill-category ${activeCategory === cat.id ? 'active' : ''}`}
-                onClick={() => setActiveCategory(cat.id)}
-                initial={{ opacity: 0, y: 10 }}
-                animate={isVisible ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.05 * idx, duration: 0.4 }}
-                whileHover={{ y: -3 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {cat.icon && <span className="category-icon">{cat.icon}</span>}
-                {cat.label}
-              </motion.div>
-            ))}
+          <div className="skills-controls">
+            <motion.div 
+              className="search-container"
+              initial={{ opacity: 0, x: -20 }}
+              animate={isVisible ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <input
+                type="text"
+                placeholder="Search skills..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="skills-search"
+              />
+            </motion.div>
+            
+            <div className="skill-categories">
+              {categories.map((cat, idx) => (
+                <motion.div
+                  key={cat.id}
+                  className={`skill-category ${activeCategory === cat.id ? 'active' : ''}`}
+                  onClick={() => setActiveCategory(cat.id)}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={isVisible ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.05 * idx, duration: 0.4 }}
+                  whileHover={{ y: -3 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {cat.icon && <span className="category-icon">{cat.icon}</span>}
+                  {cat.label}
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
         
@@ -141,9 +188,23 @@ const Skills = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              {visibleSkills.map((skill) => (
-                <SkillCard key={skill.id} skill={skill} />
-              ))}
+              {visibleSkills.length > 0 ? (
+                visibleSkills.map((skill) => (
+                  <SkillCard key={skill.id} skill={skill} />
+                ))
+              ) : (
+                <motion.div 
+                  className="no-results"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <div className="no-results-content">
+                    <h3>No skills found</h3>
+                    <p>Try adjusting your search or selecting a different category.</p>
+                  </div>
+                </motion.div>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>

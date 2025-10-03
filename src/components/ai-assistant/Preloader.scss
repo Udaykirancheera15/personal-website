@@ -3,6 +3,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem 0;
+  animation: fadeInUp 0.3s ease-out;
   
   .avatar {
     width: 36px;
@@ -53,6 +54,18 @@
       height: 8px;
       border-radius: 50%;
       background-color: var(--primary-color);
+      opacity: 0.7;
     }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

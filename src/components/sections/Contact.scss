@@ -210,15 +210,51 @@ textarea.form-control {
   padding: 0.8rem 1.2rem;
   border-radius: 12px;
   font-size: 0.95rem;
+  animation: slideInUp 0.3s ease-out;
   
   &.success {
     background-color: rgba(46, 204, 113, 0.2);
     color: #2ecc71;
+    border: 1px solid rgba(46, 204, 113, 0.3);
   }
   
   &.error {
     background-color: rgba(231, 76, 60, 0.2);
     color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+  }
+}
+
+.error-message {
+  display: block;
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.form-control.error {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.1);
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 

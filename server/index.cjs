@@ -10,7 +10,15 @@ dotenv.config();
 const app = express();
 
 // ✅ Apply middleware BEFORE route handlers
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://work-1-fuqcofebzceqatus.prod-runtime.all-hands.dev',
+    'https://work-2-fuqcofebzceqatus.prod-runtime.all-hands.dev'
+  ],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

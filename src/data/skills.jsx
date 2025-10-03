@@ -15,6 +15,7 @@ export const skillsData = [
     category: 'ml',
     title: 'Machine Learning & AI',
     icon: <FaRobot />,
+    proficiency: 95,
     skills: [
       'PyTorch & TensorFlow',
       'Vision Transformers',
@@ -33,6 +34,7 @@ export const skillsData = [
     category: 'security',
     title: 'Cybersecurity',
     icon: <FaShieldAlt />,
+    proficiency: 88,
     skills: [
       'Digital Forensics',
       'Penetration Testing',
@@ -48,10 +50,11 @@ export const skillsData = [
   {
     id: 3,
     category: 'programming',
+    proficiency: 92,
     title: 'Programming Languages',
     icon: <FaCode />,
     skills: [
-    		'Java',
+      'Java',
       'Python',
       'C/C++',
       'JavaScript',
@@ -63,6 +66,7 @@ export const skillsData = [
   {
     id: 4,
     category: 'cloud',
+    proficiency: 78,
     title: 'Cloud & DevOps',
     icon: <FaCloud />,
     skills: [
@@ -77,6 +81,7 @@ export const skillsData = [
     {
     id: 4,
     category: 'devops',
+    proficiency: 82,
     title: 'Cloud & DevOps',
     icon: <FaCloud />,
     skills: [
@@ -91,6 +96,7 @@ export const skillsData = [
   {
     id: 5,
     category: 'backend',
+    proficiency: 90,
     title: 'Backend Development',
     icon: <FaServer />,
     skills: [
@@ -105,6 +111,7 @@ export const skillsData = [
   {
     id: 6,
     category: 'database',
+    proficiency: 85,
     title: 'Databases',
     icon: <FaDatabase />,
     skills: [

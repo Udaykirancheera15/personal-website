@@ -10,16 +10,57 @@ const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const [ref, isVisible] = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
+
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'name':
+        return value.trim().length < 2 ? 'Name must be at least 2 characters' : '';
+      case 'email':
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return !emailRegex.test(value) ? 'Please enter a valid email address' : '';
+      case 'subject':
+        return value.trim().length < 3 ? 'Subject must be at least 3 characters' : '';
+      case 'message':
+        return value.trim().length < 10 ? 'Message must be at least 10 characters' : '';
+      default:
+        return '';
+    }
+  };
 
   const handleChange = e => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+    
+    // Real-time validation
+    const error = validateField(name, value);
+    if (error) {
+      setErrors(prev => ({ ...prev, [name]: error }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate all fields
+    const newErrors = {};
+    Object.keys(formData).forEach(key => {
+      const error = validateField(key, formData[key]);
+      if (error) newErrors[key] = error;
+    });
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    
     setIsSubmitting(true);
     setSubmitStatus(null);
     
@@ -27,7 +68,7 @@ const Contact = () => {
       // Get the API base URL from environment or use default
       const baseUrl = import.meta.env.VITE_API_URL || 
         (import.meta.env.MODE === 'production' 
-          ? 'https://portfolio-backend-v6dn.onrender.com'  // Update with your actual backend URL
+          ? window.location.origin  // Use same origin in production
           : 'http://localhost:3000');
       const apiUrl = `${baseUrl}/api/contact`;
 
@@ -158,51 +199,55 @@ const Contact = () => {
                 type="text" 
                 id="name" 
                 name="name" 
-                className="form-control" 
+                className={`form-control ${errors.name ? 'error' : ''}`}
                 placeholder=" " 
                 required 
                 value={formData.name} 
                 onChange={handleChange} 
               />
               <label htmlFor="name" className="form-label">Your Name</label>
+              {errors.name && <span className="error-message">{errors.name}</span>}
             </div>
             <div className="form-group">
               <input 
                 type="email" 
                 id="email" 
                 name="email" 
-                className="form-control" 
+                className={`form-control ${errors.email ? 'error' : ''}`}
                 placeholder=" " 
                 required 
                 value={formData.email} 
                 onChange={handleChange} 
               />
               <label htmlFor="email" className="form-label">Your Email</label>
+              {errors.email && <span className="error-message">{errors.email}</span>}
             </div>
             <div className="form-group">
               <input 
                 type="text" 
                 id="subject" 
                 name="subject" 
-                className="form-control" 
+                className={`form-control ${errors.subject ? 'error' : ''}`}
                 placeholder=" " 
                 required 
                 value={formData.subject} 
                 onChange={handleChange} 
               />
               <label htmlFor="subject" className="form-label">Subject</label>
+              {errors.subject && <span className="error-message">{errors.subject}</span>}
             </div>
             <div className="form-group">
               <textarea 
                 id="message" 
                 name="message" 
-                className="form-control" 
+                className={`form-control ${errors.message ? 'error' : ''}`}
                 placeholder=" " 
                 required 
                 value={formData.message} 
                 onChange={handleChange}
               ></textarea>
               <label htmlFor="message" className="form-label">Your Message</label>
+              {errors.message && <span className="error-message">{errors.message}</span>}
             </div>
             {submitStatus && (
               <div className={`submit-status ${submitStatus.success ? 'success' : 'error'}`}>

@@ -7,7 +7,7 @@ import axios from 'axios';
 // Use VITE_API_URL if set, otherwise default based on environment
 const API_URL = import.meta.env.VITE_API_URL || 
   (import.meta.env.MODE === 'production' 
-    ? 'https://portfolio-backend-v6dn.onrender.com'  // Update with your actual backend URL
+    ? window.location.origin  // Use same origin in production
     : 'http://localhost:3000');
 
 /**
